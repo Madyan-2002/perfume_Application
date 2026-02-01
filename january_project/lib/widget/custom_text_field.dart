@@ -1,50 +1,48 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final TextInputType keyType;
   final String labl;
   final String hint;
-  final String? counter;
-  final String? hlp;
   final Widget preIcon;
   final Widget? sfxIcon;
   final bool obscureT;
-  final String? Function (String?)? valid;
-
+  final String? Function(String?)? valid;
+  final Function(String)? onChanged;
 
   const CustomTextField({
     super.key,
     required this.keyType,
     required this.labl,
     required this.hint,
-    this.counter,
-    this.hlp,
     required this.preIcon,
     this.sfxIcon,
     this.obscureT = false,
     this.valid,
+    this.onChanged, 
   });
 
   @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      validator: valid,
-      keyboardType: keyType,
-      obscureText: obscureT,
+      onChanged: widget.onChanged, 
+      validator: widget.valid,
+      keyboardType: widget.keyType,
+      obscureText: widget.obscureT,
       decoration: InputDecoration(
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
-        label: Text(labl ,style: TextStyle(
-          fontFamily: 'Averia',
-          fontWeight: .bold
-        ),),
-        hint: Text(hint),
-        counterText: counter,
-        prefixIcon: preIcon,
-        suffixIcon: sfxIcon
+        label: Text(widget.labl, style: const TextStyle(fontWeight: FontWeight.bold)),
+        hintText: widget.hint, 
+        prefixIcon: widget.preIcon,
+        suffixIcon: widget.sfxIcon,
       ),
-      
     );
   }
 }
