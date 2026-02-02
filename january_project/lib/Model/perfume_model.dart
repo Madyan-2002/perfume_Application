@@ -3,8 +3,7 @@ final List<String> categories = [
   'Men',
   'Women',
   'Packages',
-  'Kids'
-  'Top',
+  'Kids',
   'Hair',
   'Body',
 ];
@@ -194,5 +193,165 @@ List<PerfumeModel> perfumesList = [
     isFav: false,
     description:
         '''Rose, White Musks, Wood of Almond L'Instant Magic transports you to a dream world.With its immediately identifiable scent, it illustrates the instant when a dream suddenly becomes possible.L’Instant Magic is a light, soft fragrance, a mist that caresses on a bed of wood and musk.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/16.jpeg',
+    name: 'Ombré Leather',
+    price: 248,
+    category: 'Packages',
+    isFav: false,
+    description:
+        '''Ombré Leather fragrance evokes the American west’s desert beauty with rich, black leather layered beneath patchouli, vetiver and jasmine sambac.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/17.jpeg',
+    name: 'Jadore',
+    price: 252,
+    category: 'Packages',
+    isFav: false,
+    description:
+        '''The J'adore set consists of: J'adore Eau de Parfum (100 ml),Refillable travel spray (10 ml capacity).''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/18.jpeg',
+    name: 'Gentleman Réserve Privée',
+    price: 178,
+    category: 'Packages',
+    isFav: false,
+    description:
+        '''Honor your loved one with Gentleman Givenchy gift set, that includes an Eau de Parfum Réserve Privée, a shower gel, and a travel spray.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/19.jpeg',
+    name: 'Paradoxe Eau de Parfum Set',
+    price: 164,
+    category: 'Packages',
+    isFav: false,
+    description:
+        '''A floral ambery fragrance that embraces the paradoxes of iconic ingredients to reveal new scented sensations.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/20.jpeg',
+    name: 'Idole Eau de Parfum',
+    price: 157,
+    category: 'Packages',
+    isFav: false,
+    description:
+        '''Idole Eau de Parfum - 50ml Idole Body Lotion - 50ml Lash Idole Mascara Mini - 2.5ml.''',
+  ),
+
+   PerfumeModel(
+    image: 'assets/images/21.jpeg',
+    name: 'Miss Dior Blooming Bouquet',
+    price: 74,
+    category: 'Hair',
+    isFav: false,
+    description:
+        '''Hair Mist features the light, refreshing character of its namesake fragrance.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/22.jpeg',
+    name: 'Good Girl Eau De Parfum 2',
+    price: 64,
+    category: 'Hair',
+    isFav: false,
+    description:
+        '''Fragrance Family Oriental Floral Tuberose, Jasmine Sambac, and Tonka beans.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/23.jpeg',
+    name: 'GABRIELLE CHANEL',
+    price: 92,
+    category: 'Hair',
+    isFav: false,
+    description:
+        '''GABRIELLE CHANEL Hair Mist highlights the luminous floral notes of the fragrance.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/24.jpeg',
+    name: 'YSL Libre Hairmist 2',
+    price: 77,
+    category: 'Hair',
+    isFav: false,
+    description:
+        '''Spray the fragrance on the pulse points i.e. your neck and wrists, they emanate heat that helps the fragrance project from your skin for a longer-lasting, stronger scent.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/25.jpeg',
+    name: 'CHANCE EAU TENDRE',
+    price: 92,
+    category: 'Hair',
+    isFav: false,
+    description:
+        '''The hair mist fragrances the hair with the floral-fruity notes of CHANCE EAU TENDRE.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/26.jpeg',
+    name: 'N°5',
+    price: 73,
+    category: 'Body',
+    isFav: false,
+    description:
+        '''A wave of freshness that carries the feminine and sensual notes of N°5. This deodorant spray is the subtle finishing touch to the perfuming ritual.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/27.jpeg',
+    name: 'Rose Prick ',
+    price: 179,
+    category: 'Body',
+    isFav: false,
+    description:
+        '''A fragrance that presents Bulgarian rose and rose de mai pierced with thorns of fiery pepper and spice, while Indonesian patchouli exhales around Turkish rose‘s precious heart.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/28.jpeg',
+    name: 'DEODORANT SPRAY',
+    price: 72,
+    category: 'Body',
+    isFav: false,
+    description:
+        '''A deodorant with the floral notes of CHANCE. A light and fresh veil that provides instant comfort and well-being, leaving the skin delicately fragranced.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/29.jpeg',
+    name: 'Spray & Mist',
+    price: 95,
+    category: 'Body',
+    isFav: false,
+    description:
+        '''Freedom Comes From Within, The Desert Heart Of The West Wrapped In Leather. It Moves Forward, Untethered, Through The Still Air Of Wide-Open Space.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/30.jpeg',
+    name: 'Deodorant Spray ',
+    price: 95,
+    category: 'Body',
+    isFav: false,
+    description:
+        '''This scented deodorant offers protection and freshness throughout the day. Its very gentle formula, enriched with rose extract, protects the skin durably.''',
+  ),
+
+  PerfumeModel(
+    image: 'assets/images/31.jpeg',
+    name: 'Coco Mademoiselle',
+    price: 170,
+    category: 'Body',
+    isFav: false,
+    description:
+        '''Coco Mademoiselle Pearly Body Oil is a shimmering, scented oil that gives skin a beautiful glow and awakens the senses.''',
   ),
 ];
