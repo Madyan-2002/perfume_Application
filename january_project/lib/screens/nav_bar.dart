@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:january_project/Model/perfume_model.dart';
 import 'package:january_project/screens/cart_screen.dart';
 import 'package:january_project/screens/favorite_screen.dart';
 import 'package:january_project/screens/home_screen.dart';
@@ -13,59 +14,79 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  final List<Widget> screens = [
-    HomeScreen(),
-    FavoriteScreen(),
-    ProfileScreen(),
-    CartScreen(),
-  ];
-
-  Map<String, dynamic> infoScreen = {
-    'Home': Icon(Icons.home, color: ColorClass.backG),
-    'Favorite': Icon(Icons.favorite, color: ColorClass.backG),
-    'Profile': Icon(Icons.person, color: ColorClass.backG),
-    'Cart': Icon(Icons.shopping_cart, color: ColorClass.backG),
-  };
+  List<PerfumeModel> cart = [];
   int index = 0;
+
+  void changeIndex(int newIndex) {
+    setState(() {
+      index = newIndex;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    final List<Widget> screens = [
+      HomeScreen(cart: cart),
+       FavoriteScreen(
+        onGoShopping:() => changeIndex(0),
+      ),
+      ProfileScreen(cart: cart),
+      CartScreen(
+        cart: cart, 
+        onGoShopping: () => changeIndex(0), // برجعني للهوم
+      ),
+    ];
+
     return Scaffold(
       appBar: index == 0 ? null : normalAppBar(),
       body: screens[index],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: ColorClass.mad,
-        selectedItemColor: Colors.white, // اللون للزر المفعل
-        unselectedItemColor: Colors.grey, // اللون للغير مفعل
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey[400],
         currentIndex: index,
-        onTap: (value) {
-          setState(() {
-            index = value;
-          });
-        },
-        items: infoScreen.entries
-            .map((i) => BottomNavigationBarItem(icon: i.value, label: i.key))
-            .toList(),
+        onTap: (value) => setState(() => index = value),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorite'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
+        ],
       ),
     );
   }
 
   AppBar normalAppBar() {
     return AppBar(
+      leading: InkWell(
+        onTap: () {
+         changeIndex(0);
+        },
+        child: Icon(Icons.arrow_back_ios,color: Colors.white,)),
       backgroundColor: ColorClass.mad,
-      title: ListTile(
-        title: Text(
-          "One Piece",
-          style: TextStyle(
-            fontFamily: 'Averia',
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+      elevation: 0,
+      centerTitle: true,
+      title: const Text(
+        "One Piece",
+        style: TextStyle(
+          fontFamily: 'Averia',
+          fontSize: 26,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
         ),
-        trailing: CircleAvatar(backgroundColor: Colors.white),
       ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 15),
+          child: CircleAvatar(
+            radius: 18,
+            backgroundColor: Colors.white24,
+            child: const Icon(Icons.notifications_none, color: Colors.white, size: 20),
+          ),
+        )
+      ],
     );
   }
 }

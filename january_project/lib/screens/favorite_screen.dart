@@ -5,7 +5,8 @@ import 'package:january_project/styles/color_class.dart';
 import 'package:january_project/widget/items_card.dart';
 
 class FavoriteScreen extends StatelessWidget {
-  const FavoriteScreen({super.key});
+  final VoidCallback onGoShopping;
+  const FavoriteScreen({super.key, required this.onGoShopping});
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +82,9 @@ class FavoriteScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Divider(color: Colors.grey[300], thickness: 1, height: 30),
 
-            // 2. عرض المحتوى
             Expanded(
               child: favorites.isEmpty
-                  ? _buildEmptyState() // دالة مخصصة لشكل الصفحة وهي فارغة
+                  ? _buildEmptyState()
                   : GridView.builder(
                       physics: const BouncingScrollPhysics(),
                       itemCount: favorites.length,
@@ -105,7 +105,7 @@ class FavoriteScreen extends StatelessWidget {
       ),
     );
   }
-  // ودجت يظهر عندما تكون القائمة فارغة بشكل جذاب
+
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -126,6 +126,26 @@ class FavoriteScreen extends StatelessWidget {
             "Explore our perfumes and add your favorites.",
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey),
+          ),
+          const SizedBox(height: 40),
+          SizedBox(
+            width: 200,
+            child: ElevatedButton(
+              onPressed: onGoShopping,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorClass.mad,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+              ),
+              child: const Text(
+                "Start Exploring",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
         ],
       ),

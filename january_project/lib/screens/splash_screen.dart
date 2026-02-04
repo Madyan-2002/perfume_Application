@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:january_project/screens/intro_screen.dart';
 import 'package:january_project/screens/login_screen.dart';
-import 'package:january_project/styles/color_class.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,57 +16,46 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
+    Timer(const Duration(seconds: 5), () {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) =>  IntroScreen()),
+        );
+      }
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
+        fit: StackFit.expand, 
         children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: .topCenter,
-                end: .bottomCenter,
-                colors: [
-                  Color.fromARGB(205, 0, 45, 57),
-                  Color(0xCD01313e),
-                  Color.fromARGB(205, 0, 45, 57),
-                ],
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: .center,
-              children: [
-                Text(
-                  "One Piece",
-                  style: TextStyle(
-                    color: ColorClass.primary,
-                    fontSize: 40,
-                    fontWeight: .bold,
-                    fontFamily: "Averia",
-                  ),
-                ),
-
-                CircularProgressIndicator(color: Colors.white, strokeWidth: 5),
-              ],
-            ),
+          Image.asset(
+            "assets/images/logo2.jpeg", 
+            fit: BoxFit.cover,
           ),
-          Positioned(
-            bottom: -30,
-            left: -10,
-            child: Image.asset(
-              "assets/images/one.jpeg",
-              width: 200,
-              fit: BoxFit.cover,
-            ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // const Text(
+              //   "ONE PIECE",
+              //   style: TextStyle(
+              //     color: Colors
+              //         .white, 
+              //     fontSize: 32,
+              //     letterSpacing: 8, 
+              //     fontWeight: FontWeight.w300,
+              //     fontFamily: "Averia",
+              //   ),
+              // ),
+              const SizedBox(height: 70),
+              const CircularProgressIndicator(
+                color: Colors.white70,
+                strokeWidth: 2,
+              ),
+            ],
           ),
         ],
       ),

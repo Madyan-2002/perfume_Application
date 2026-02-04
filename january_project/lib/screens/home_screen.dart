@@ -8,7 +8,8 @@ import 'package:january_project/widget/home_carousel.dart';
 import 'package:january_project/widget/items_card.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final List<PerfumeModel> cart;
+  const HomeScreen({super.key, required this.cart});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -47,44 +48,50 @@ class _HomeScreenState extends State<HomeScreen> {
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              /// ===== Header & Search Section =====
+              /// ===== Header & Search Section (Updated) =====
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Header Row: Title + Notification
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "Find Your Treasure",
                                 style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
+                                  color: Colors.grey[600], // لون أهدأ
+                                  fontSize: 13, // حجم أصغر قليلاً
+                                  letterSpacing: 0.5,
                                 ),
                               ),
-                              Text(
+                              const SizedBox(height: 4),
+                              const Text(
                                 "One Piece Store",
                                 style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 26, // تكبير العنوان الرئيسي
+                                  fontWeight:
+                                      FontWeight.w900, // خط عريض جداً للهوية
                                   fontFamily: 'Averia',
                                 ),
                               ),
                             ],
                           ),
+                          // Notification Icon inside a soft circle
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
+                              shape: BoxShape.circle, // شكل دائري أرقى
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
+                                  color: Colors.black.withOpacity(0.03),
                                   blurRadius: 10,
+                                  spreadRadius: 2,
                                 ),
                               ],
                             ),
@@ -92,20 +99,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: Icon(
                                 Icons.notifications_none_rounded,
                                 color: ColorClass.icons,
+                                size: 28,
                               ),
                               onPressed: () {},
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+
+                      const SizedBox(height: 25),
+
                       CustomTextField(
                         keyType: TextInputType.text,
                         labl: 'Search',
                         hint: "Find your signature scent...",
                         preIcon: Icon(
                           Icons.search_rounded,
-                          color: ColorClass.icons,
+                          color: ColorClass.icons.withOpacity(
+                            0.6,
+                          ),
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -116,16 +128,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       const SizedBox(height: 20),
                       const HomeCarousel(),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
 
                       const Text(
                         "Categories",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                     ],
                   ),
                 ),
@@ -192,6 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 MaterialPageRoute(
                                   builder: (context) => DetailsScreen(
                                     mad: fliteredPerfumes[index],
+                                    cart: widget.cart,
                                   ),
                                 ),
                               );

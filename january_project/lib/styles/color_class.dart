@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ColorClass {
-  static Color primary = Colors.white;
+  static Color primary = const Color.fromARGB(255, 239, 237, 237);
+  static Color intro  =  Color.fromARGB(230, 0, 45, 57);
   static Color buttons = Color.fromARGB(205, 0, 45, 57);
   static Color icons = Color.fromRGBO(228, 105, 48, 0.804);
   static Color bottomNav = Color.fromARGB(160, 12, 51, 62);

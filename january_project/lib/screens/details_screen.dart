@@ -4,7 +4,8 @@ import 'package:january_project/styles/color_class.dart';
 
 class DetailsScreen extends StatelessWidget {
   final PerfumeModel mad;
-  const DetailsScreen({super.key, required this.mad});
+  final List<PerfumeModel> cart;
+  const DetailsScreen({super.key, required this.mad, required this.cart});
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +13,15 @@ class DetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorClass.details,
       appBar: AppBar(
+        leading: InkWell(onTap: () {
+          Navigator.pop(context);
+        },
+          child: Icon(Icons.arrow_back_ios,color: ColorClass.lightGrey,)),
+        backgroundColor: ColorClass.mad,
         title: Text(
           mad.name,
           style: TextStyle(
+            color: ColorClass.lightGrey,
             fontFamily: 'Averia',
             fontWeight: .bold,
             fontSize: 20,
@@ -24,75 +31,103 @@ class DetailsScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.all(10),
-            child: Icon(Icons.favorite_border, color: Colors.black),
+            child: Icon(Icons.favorite, color: ColorClass.lightGrey),
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(20.0), // زيادة بسيطة في الحواف لترتيب المحتوى
         child: Column(
-          mainAxisAlignment: .spaceEvenly,
           children: [
+            // حاوية الصورة
             Container(
-              height: height * 0.50,
+              height: height * 0.45,
+              width: double.infinity,
               decoration: BoxDecoration(
+                color: Colors.white, // خلفية بيضاء تبرز زجاجة العطر
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.black.withOpacity(0.05),
                     spreadRadius: 2,
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
                   ),
                 ],
-                image: DecorationImage(
-                  colorFilter: ColorFilter.mode(
-                    Color(0xCDD9A071).withOpacity(0.2),
-                    BlendMode.darken,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(
+                  mad.image,
+                  fit: BoxFit.contain, // هذا التعديل يمنع تمطط الصورة ويحافظ على شكل العطر
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 20),
+            const Divider(thickness: 1.2), // فاصل أوضح قليلاً
+            const SizedBox(height: 15),
+
+            // الوصف مع خاصية التمرير إذا كان النص طويلاً
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  mad.description,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    height: 1.4, // تباعد أسطر مريح للعين
                   ),
-                  image: AssetImage(mad.image),
-                  fit: BoxFit.fill,
                 ),
               ),
             ),
 
-            Text(
-              mad.description,
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall!.copyWith(fontWeight: .bold),
-            ),
-            Spacer(),
+            const SizedBox(height: 20),
+
+            // منطقة السعر والزر كما هي في كودك مع تنسيق المسافات
             Row(
-              mainAxisAlignment: .spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Card(
-                  elevation: 25,
+                  elevation: 5, // تقليل الظل الضخم (25) ليكون أكثر واقعية
                   color: ColorClass.details,
                   child: SizedBox(
-                    height: 40,
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    height: 45,
+                    width: MediaQuery.of(context).size.width * 0.28,
                     child: Center(
                       child: Text(
                         '${mad.price} \$',
-                        style: Theme.of(context).textTheme.headlineSmall!
-                            .copyWith(fontWeight: .bold, color: ColorClass.mad),
+                        style: Theme.of(context).textTheme.titleLarge!
+                            .copyWith(fontWeight: FontWeight.bold, color: ColorClass.mad),
                       ),
                     ),
                   ),
                 ),
-                Card(
-                  elevation: 25,
-                  color: ColorClass.mad,
-                  child: SizedBox(
-                    height: 40,
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: Center(
-                      child: Text(
-                        "ADD TO CART",
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontWeight: .bold,
-                          color: Colors.white,
+                InkWell(
+                  onTap: () {
+                    cart.add(mad);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("${mad.name} added to cart!"),
+                        duration: const Duration(seconds: 1),
+                        backgroundColor: ColorClass.mad,
+                        behavior: SnackBarBehavior.floating, // يجعل التنبيه يظهر بشكل أجمل
+                      ),
+                    );
+                  },
+                  child: Card(
+                    elevation: 5,
+                    color: ColorClass.mad,
+                    child: SizedBox(
+                      height: 45,
+                      width: MediaQuery.of(context).size.width * 0.55,
+                      child: Center(
+                        child: Text(
+                          "ADD TO CART",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold, 
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
