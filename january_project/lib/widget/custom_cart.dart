@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:january_project/Model/perfume_model.dart';
 
 class CustomCart extends StatelessWidget {
-  PerfumeModel cart;
-  CustomCart({super.key, required this.cart});
+  final PerfumeModel cart;
+  const CustomCart({super.key, required this.cart});
 
   @override
   Widget build(BuildContext context) {

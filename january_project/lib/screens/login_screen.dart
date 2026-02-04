@@ -39,7 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
-                  // نص ترحيبي
                   const Text(
                     "Welcome Back",
                     style: TextStyle(

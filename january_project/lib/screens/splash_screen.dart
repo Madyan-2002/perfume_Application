@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:january_project/screens/intro_screen.dart';
-import 'package:january_project/screens/login_screen.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) =>  IntroScreen()),
+          MaterialPageRoute(builder: (context) => IntroScreen()),
         );
       }
     });
@@ -30,12 +28,9 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand, 
+        fit: StackFit.expand,
         children: [
-          Image.asset(
-            "assets/images/logo2.jpeg", 
-            fit: BoxFit.cover,
-          ),
+          Image.asset("assets/images/logo2.jpeg", fit: BoxFit.cover),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -43,9 +38,9 @@ class _SplashScreenState extends State<SplashScreen> {
               //   "ONE PIECE",
               //   style: TextStyle(
               //     color: Colors
-              //         .white, 
+              //         .white,
               //     fontSize: 32,
-              //     letterSpacing: 8, 
+              //     letterSpacing: 8,
               //     fontWeight: FontWeight.w300,
               //     fontFamily: "Averia",
               //   ),

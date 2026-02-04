@@ -25,15 +25,12 @@ class _NavBarState extends State<NavBar> {
 
   @override
   Widget build(BuildContext context) {
-
     final List<Widget> screens = [
       HomeScreen(cart: cart),
-       FavoriteScreen(
-        onGoShopping:() => changeIndex(0),
-      ),
+      FavoriteScreen(onGoShopping: () => changeIndex(0)),
       ProfileScreen(cart: cart),
       CartScreen(
-        cart: cart, 
+        cart: cart,
         onGoShopping: () => changeIndex(0), // برجعني للهوم
       ),
     ];
@@ -50,9 +47,15 @@ class _NavBarState extends State<NavBar> {
         onTap: (value) => setState(() => index = value),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorite'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favorite',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Cart',
+          ),
         ],
       ),
     );
@@ -62,9 +65,10 @@ class _NavBarState extends State<NavBar> {
     return AppBar(
       leading: InkWell(
         onTap: () {
-         changeIndex(0);
+          changeIndex(0);
         },
-        child: Icon(Icons.arrow_back_ios,color: Colors.white,)),
+        child: Icon(Icons.arrow_back_ios, color: Colors.white),
+      ),
       backgroundColor: ColorClass.mad,
       elevation: 0,
       centerTitle: true,
@@ -83,9 +87,13 @@ class _NavBarState extends State<NavBar> {
           child: CircleAvatar(
             radius: 18,
             backgroundColor: Colors.white24,
-            child: const Icon(Icons.notifications_none, color: Colors.white, size: 20),
+            child: const Icon(
+              Icons.notifications_none,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
-        )
+        ),
       ],
     );
   }

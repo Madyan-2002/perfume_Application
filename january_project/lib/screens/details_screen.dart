@@ -13,10 +13,12 @@ class DetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorClass.details,
       appBar: AppBar(
-        leading: InkWell(onTap: () {
-          Navigator.pop(context);
-        },
-          child: Icon(Icons.arrow_back_ios,color: ColorClass.lightGrey,)),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back_ios, color: ColorClass.lightGrey),
+        ),
         backgroundColor: ColorClass.mad,
         title: Text(
           mad.name,
@@ -36,7 +38,9 @@ class DetailsScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0), // زيادة بسيطة في الحواف لترتيب المحتوى
+        padding: const EdgeInsets.all(
+          20.0,
+        ), // زيادة بسيطة في الحواف لترتيب المحتوى
         child: Column(
           children: [
             // حاوية الصورة
@@ -44,7 +48,7 @@ class DetailsScreen extends StatelessWidget {
               height: height * 0.45,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white, // خلفية بيضاء تبرز زجاجة العطر
+                color: ColorClass.lightGrey,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -57,25 +61,21 @@ class DetailsScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  mad.image,
-                  fit: BoxFit.contain, // هذا التعديل يمنع تمطط الصورة ويحافظ على شكل العطر
-                ),
+                child: Image.asset(mad.image, fit: BoxFit.contain),
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            const Divider(thickness: 1.2), // فاصل أوضح قليلاً
+            const Divider(thickness: 1.2),
             const SizedBox(height: 15),
 
-            // الوصف مع خاصية التمرير إذا كان النص طويلاً
             Expanded(
               child: SingleChildScrollView(
                 child: Text(
                   mad.description,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     fontWeight: FontWeight.bold,
-                    height: 1.4, // تباعد أسطر مريح للعين
+                    height: 1.4,
                   ),
                 ),
               ),
@@ -83,12 +83,11 @@ class DetailsScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // منطقة السعر والزر كما هي في كودك مع تنسيق المسافات
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Card(
-                  elevation: 5, // تقليل الظل الضخم (25) ليكون أكثر واقعية
+                  elevation: 5,
                   color: ColorClass.details,
                   child: SizedBox(
                     height: 45,
@@ -96,8 +95,10 @@ class DetailsScreen extends StatelessWidget {
                     child: Center(
                       child: Text(
                         '${mad.price} \$',
-                        style: Theme.of(context).textTheme.titleLarge!
-                            .copyWith(fontWeight: FontWeight.bold, color: ColorClass.mad),
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: ColorClass.mad,
+                        ),
                       ),
                     ),
                   ),
@@ -110,7 +111,7 @@ class DetailsScreen extends StatelessWidget {
                         content: Text("${mad.name} added to cart!"),
                         duration: const Duration(seconds: 1),
                         backgroundColor: ColorClass.mad,
-                        behavior: SnackBarBehavior.floating, // يجعل التنبيه يظهر بشكل أجمل
+                        behavior: SnackBarBehavior.floating,
                       ),
                     );
                   },
@@ -124,7 +125,7 @@ class DetailsScreen extends StatelessWidget {
                         child: Text(
                           "ADD TO CART",
                           style: const TextStyle(
-                            fontWeight: FontWeight.bold, 
+                            fontWeight: FontWeight.bold,
                             color: Colors.white,
                             fontSize: 16,
                           ),

@@ -30,7 +30,6 @@ class _IntroScreenState extends State<IntroScreen> {
       "image": "assets/images/intro3.png",
     },
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +44,7 @@ class _IntroScreenState extends State<IntroScreen> {
                   Color.fromARGB(240, 8, 37, 35),
                   Color.fromARGB(230, 7, 22, 21),
                   Color.fromARGB(210, 8, 37, 35),
+                  ColorClass.lightGrey,
                   ColorClass.lightGrey,
                   ColorClass.lightGrey,
                   ColorClass.primary,
@@ -62,8 +62,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 mainAxisAlignment: .center,
                 children: [
                   Container(
-                    height:
-                        MediaQuery.of(context).size.height * 0.45, 
+                    height: MediaQuery.of(context).size.height * 0.45,
                     width: double.infinity,
                     margin: const EdgeInsets.symmetric(horizontal: 40),
                     decoration: BoxDecoration(
@@ -112,7 +111,7 @@ class _IntroScreenState extends State<IntroScreen> {
           ),
 
           Positioned(
-            bottom: 50,
+            bottom: 40,
             left: 20,
             right: 20,
             child: Row(
@@ -173,7 +172,7 @@ class _IntroScreenState extends State<IntroScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: 8,
-      width: _currentIndex == index ? 24 : 8,
+      width: _currentIndex == index ? 24 : 8, // هذا يحول النقطة من مجرد دائرة إلى مستطيل عريض، 
       margin: const EdgeInsets.only(right: 5),
       decoration: BoxDecoration(
         color: _currentIndex == index ? ColorClass.mad : Colors.grey[300],
