@@ -9,6 +9,8 @@ class CustomTextField extends StatefulWidget {
   final bool obscureT;
   final String? Function(String?)? valid;
   final Function(String)? onChanged;
+  final TextEditingController? controller;
+  
 
   const CustomTextField({
     super.key,
@@ -20,6 +22,7 @@ class CustomTextField extends StatefulWidget {
     this.obscureT = false,
     this.valid,
     this.onChanged, 
+    this.controller
   });
 
   @override
@@ -31,6 +34,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       onChanged: widget.onChanged, 
+      controller: widget.controller,
       validator: widget.valid,
       keyboardType: widget.keyType,
       obscureText: widget.obscureT,

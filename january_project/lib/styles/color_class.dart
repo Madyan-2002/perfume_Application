@@ -7,7 +7,7 @@ class ColorClass {
   static Color icons = Color.fromRGBO(228, 105, 48, 0.804);
   static Color bottomNav = Color.fromARGB(160, 12, 51, 62);
   static Color mad = Color.fromARGB(205, 12, 51, 62);
-  static Color backG = Color.fromARGB(205, 240, 235, 232);
+  static Color backG = Color.fromARGB(250, 249, 244, 241);
   static Color details = Color(0xCDfffdf5);
   static Color price = Color(0xFFD9A071);
   static Color darkGrey = Color(0xFF333333);

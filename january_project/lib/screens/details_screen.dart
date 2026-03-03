@@ -25,7 +25,7 @@ class DetailsScreen extends StatelessWidget {
           style: TextStyle(
             color: ColorClass.lightGrey,
             fontFamily: 'Averia',
-            fontWeight: .bold,
+            fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
         ),

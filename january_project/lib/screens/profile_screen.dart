@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:january_project/Model/perfume_model.dart';
 import 'package:january_project/screens/cart_screen.dart';
 import 'package:january_project/screens/favorite_screen.dart';
-import 'package:january_project/screens/login_screen.dart';
+import 'package:january_project/screens/register_login_screen.dart';
 import 'package:january_project/styles/color_class.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -94,7 +94,7 @@ class ProfileScreen extends StatelessWidget {
                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
+                        builder: (context) => RegisterLoginScreen(),
                       ),
                     );
                   

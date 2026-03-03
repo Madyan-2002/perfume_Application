@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:january_project/screens/login_screen.dart';
+import 'package:january_project/screens/register_login_screen.dart';
 import 'package:january_project/styles/color_class.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -59,7 +59,7 @@ class _IntroScreenState extends State<IntroScreen> {
             itemCount: intro.length,
             itemBuilder: (context, index) {
               return Column(
-                mainAxisAlignment: .center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height * 0.45,
@@ -141,7 +141,7 @@ class _IntroScreenState extends State<IntroScreen> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
+                          builder: (context) => const RegisterLoginScreen(),
                         ),
                         (route) => false,
                       );
