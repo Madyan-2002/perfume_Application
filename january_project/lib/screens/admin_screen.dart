@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:january_project/screens/register_login_screen.dart';
+import 'package:january_project/widget/_build_list_view.dart';
+
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -15,17 +18,10 @@ class _AdminScreenState extends State<AdminScreen> {
   final descController = TextEditingController();
   final imgController = TextEditingController();
 
-  
   final List<String> categories = [
-  'All',
-  'Men',
-  'Women',
-  'Packages',
-  'Kids',
-  'Hair',
-  'Body',
-];
-String selectedCategory = "All";
+    'Men', 'Women', 'Packages', 'Kids', 'Hair', 'Body',
+  ];
+  String selectedCategory = "Men";
 
   bool isLoading = false;
 
@@ -98,9 +94,7 @@ String selectedCategory = "All";
             _inputField("Price", priceController),
             _inputField("Description", descController, maxLines: 2),
             _inputField("Image URL", imgController),
-
             const SizedBox(height: 10),
-
             DropdownButtonFormField(
               value: selectedCategory,
               items: categories
@@ -114,9 +108,7 @@ String selectedCategory = "All";
                 ),
               ),
             ),
-
             const SizedBox(height: 15),
-
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -164,50 +156,25 @@ String selectedCategory = "All";
   }
 
   Widget _buildProductsSection() {
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('perfumes').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        }
+        if (!snapshot.hasData) return const CircularProgressIndicator();
 
-        final docs = snapshot.data!.docs;
+        final products = snapshot.data!.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          data['id'] = doc.id;
+          return data;
+        }).toList();
 
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final data = docs[index];
-
-            return Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: ListTile(
-                leading: data['img'] != null
-                    ? Image.network(data['img'], width: 50)
-                    : const Icon(Icons.image),
-                title: Text(data['name']),
-                subtitle: Text("\$${data['price']}"),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () =>
-                      FirebaseFirestore.instance
-                          .collection('perfumes')
-                          .doc(data.id)
-                          .delete(),
-                ),
-              ),
-            );
-          },
-        );
+        return BuildListView(products: products);
       },
     );
   }
 
   Future<void> _addPerfume() async {
+    if (nameController.text.isEmpty || priceController.text.isEmpty) return;
+
     setState(() => isLoading = true);
 
     await FirebaseFirestore.instance.collection('perfumes').add({
@@ -228,5 +195,11 @@ String selectedCategory = "All";
 
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
+
+  Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (context) => const RegisterLoginScreen()), 
+    (Route<dynamic> route) => false,
+  );
   }
 }

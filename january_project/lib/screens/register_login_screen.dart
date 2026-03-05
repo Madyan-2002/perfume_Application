@@ -6,6 +6,7 @@ import 'package:january_project/widget/custom_text_field.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class RegisterLoginScreen extends StatefulWidget {
   const RegisterLoginScreen({super.key});
@@ -204,6 +205,36 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
                         ),
                       ),
                     ),
+                  const SizedBox(height: 20),
+                  OutlinedButton(
+                    onPressed: () async {
+                      await signInWithGoogle();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.all(12),
+                      side: const BorderSide(color: Colors.grey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJg75LWB1zIJt1VTZO7O68yKciaDSkk3KMdw&s',
+                          height: 25,
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Sign in with Google',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
                   const SizedBox(height: 5),
                   Row(
@@ -237,41 +268,42 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
-
-Future<void> addUser(UserCredential userCred) async {
-  try {
-    CollectionReference users = firestore.collection('users');
-    await users.doc(userCred.user!.uid).set({
-      'email': emailController.text.trim(),
-      'role': 'user',
-    });
-    print("User document created successfully");
-  } catch (e) {
-    print("Error adding user to Firestore: $e");
-    rethrow;
+  Future<void> addUser(UserCredential userCred) async {
+    try {
+      CollectionReference users = firestore.collection('users');
+      await users.doc(userCred.user!.uid).set({
+        'email': emailController.text.trim(),
+        'role': 'user',
+      });
+      print("User document created successfully");
+    } catch (e) {
+      print("Error adding user to Firestore: $e");
+      rethrow;
+    }
   }
-}
+
   Future<String> signUp({
-  required String emailAddress,
-  required String password,
-}) async {
-  try {
-    // نحفظ النتيجة في متغير userCred
-    UserCredential userCred = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-      email: emailAddress,
-      password: password,
-    );
+    required String emailAddress,
+    required String password,
+  }) async {
+    try {
+      // نحفظ النتيجة في متغير userCred
+      UserCredential userCred =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailAddress,
+        password: password,
+      );
 
-    await addUser(userCred);
+      await addUser(userCred);
 
-    return 'done';
-  } on FirebaseAuthException catch (e) {
-    return e.message ?? 'An error occurred';
-  } catch (e) {
-    return e.toString();
+      return 'done';
+    } on FirebaseAuthException catch (e) {
+      return e.message ?? 'An error occurred';
+    } catch (e) {
+      return e.toString();
+    }
   }
-}
+
   Future<String> login({
     required String emailAddress,
     required String password,
@@ -308,7 +340,7 @@ Future<void> addUser(UserCredential userCred) async {
         );
       }
 
-       if (result == 'done login' || result == 'done') {
+      if (result == 'done login' || result == 'done') {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -338,4 +370,45 @@ Future<void> addUser(UserCredential userCred) async {
       }
     }
   }
+
+  Future<void> signInWithGoogle() async {
+  try {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    // التحقق مما إذا كان المستخدم جديداً لإضافته إلى Firestore
+    final userDoc = await firestore.collection('users').doc(userCred.user!.uid).get();
+    
+    if (!userDoc.exists) {
+      // تعديل بسيط: نأخذ الإيميل من userCred لأن controller قد يكون فارغاً في حال دخول جوجل
+      await firestore.collection('users').doc(userCred.user!.uid).set({
+        'email': userCred.user!.email,
+        'role': 'user',
+      });
+    }
+    
+    // بعد النجاح، وجه المستخدم بناءً على الـ Role
+    _handleNavigation(userCred.user!.uid);
+
+  } catch (e) {
+    print("Google Sign-In Error: $e");
+  }
+}
+
+// دالة مساعدة للتوجيه (Navigation) لتقليل تكرار الكود
+void _handleNavigation(String uid) async {
+  final doc = await firestore.collection('users').doc(uid).get();
+  if (doc.exists) {
+    String role = doc['role'];
+    Widget nextScreen = (role == 'admin') ? const AdminScreen() : const NavBar();
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => nextScreen));
+  }
+}
 }

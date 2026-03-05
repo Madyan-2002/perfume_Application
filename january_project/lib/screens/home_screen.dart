@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:january_project/Model/perfume_model.dart';
 import 'package:january_project/screens/details_screen.dart';
@@ -20,9 +21,18 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedFilter = 'All';
   String searchText = '';
 
-  // منطق الفلترة المدمج: يجمع بين التصنيف المختار ونص البحث
-  List<PerfumeModel> get fliteredPerfumes {
-    return perfumesList.where((perfume) {
+  List<String> categories = [
+    'All',
+    'Men',
+    'Women',
+    'Packages',
+    'Kids',
+    'Hair',
+    'Body',
+  ];
+
+  List<PerfumeModel> filterPerfumes(List<PerfumeModel> perfumes) {
+    return perfumes.where((perfume) {
       final matchesCategory =
           selectedFilter == 'All' || perfume.category == selectedFilter;
 
@@ -49,14 +59,13 @@ class _HomeScreenState extends State<HomeScreen> {
           child: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              /// ===== Header & Search Section (Updated) =====
+              // Header + Search
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Header Row: Title + Notification
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -82,7 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -105,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => NotificationsScreen(),
+                                    builder: (context) =>
+                                        NotificationsScreen(),
                                   ),
                                 );
                               },
@@ -113,9 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 25),
-
                       CustomTextField(
                         keyType: TextInputType.text,
                         labl: 'Search',
@@ -130,11 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           });
                         },
                       ),
-
                       const SizedBox(height: 20),
                       const HomeCarousel(),
                       const SizedBox(height: 25),
-
                       const Text(
                         "Categories",
                         style: TextStyle(
@@ -149,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              /// ===== Categories Horizontal List =====
+              // Categories
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: 50,
@@ -176,57 +181,75 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              /// ===== Animated Grid Products =====
-              SliverPadding(
-                padding: const EdgeInsets.all(20),
-                sliver: fliteredPerfumes.isEmpty
-                    ? const SliverToBoxAdapter(
+              // Products from Firestore
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('perfumes')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  final perfumes = snapshot.data!.docs
+                      .map((doc) => PerfumeModel.fromFirestore(doc))
+                      .toList();
+
+                  final filtered = filterPerfumes(perfumes);
+
+                  if (filtered.isEmpty) {
+                    return const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 50),
                         child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.search_off_rounded,
-                                  size: 50,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  "No items match your search",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
+                          child: Text(
+                            "No items match your search",
+                            style: TextStyle(color: Colors.grey),
                           ),
                         ),
-                      )
-                    : SliverGrid(
-                        delegate: SliverChildBuilderDelegate((context, index) {
+                      ),
+                    );
+                  }
+
+                  return SliverPadding(
+                    padding: const EdgeInsets.all(20),
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final perfume = filtered[index];
                           return InkWell(
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => DetailsScreen(
-                                    mad: fliteredPerfumes[index],
+                                    mad: perfume,
                                     cart: widget.cart,
                                   ),
                                 ),
                               );
                             },
-                            child: ItemsCard(perfume: fliteredPerfumes[index]),
+                            child: ItemsCard(perfume: perfume),
                           );
-                        }, childCount: fliteredPerfumes.length),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 15,
-                              mainAxisSpacing: 15,
-                              childAspectRatio: 0.7,
-                            ),
+                        },
+                        childCount: filtered.length,
                       ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 15,
+                        mainAxisSpacing: 15,
+                        childAspectRatio: 0.7,
+                      ),
+                    ),
+                  );
+                },
               ),
+
               const SliverToBoxAdapter(child: SizedBox(height: 80)),
             ],
           ),
@@ -235,3 +258,57 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+
+/// ===== Animated Grid Products =====
+              // SliverPadding(
+              //   padding: const EdgeInsets.all(20),
+              //   sliver: fliteredPerfumes.isEmpty
+              //       ? const SliverToBoxAdapter(
+              //           child: Center(
+              //             child: Padding(
+              //               padding: EdgeInsets.only(top: 50),
+              //               child: Column(
+              //                 children: [
+              //                   Icon(
+              //                     Icons.search_off_rounded,
+              //                     size: 50,
+              //                     color: Colors.grey,
+              //                   ),
+              //                   SizedBox(height: 10),
+              //                   Text(
+              //                     "No items match your search",
+              //                     style: TextStyle(color: Colors.grey),
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ),
+              //         )
+              //       : SliverGrid(
+              //           delegate: SliverChildBuilderDelegate((context, index) {
+              //             return InkWell(
+              //               onTap: () {
+              //                 Navigator.push(
+              //                   context,
+              //                   MaterialPageRoute(
+              //                     builder: (context) => DetailsScreen(
+              //                       mad: fliteredPerfumes[index],
+              //                       cart: widget.cart,
+              //                     ),
+              //                   ),
+              //                 );
+              //               },
+              //               child: ItemsCard(perfume: fliteredPerfumes[index]),
+              //             );
+              //           }, childCount: fliteredPerfumes.length),
+              //           gridDelegate:
+              //               const SliverGridDelegateWithFixedCrossAxisCount(
+              //                 crossAxisCount: 2,
+              //                 crossAxisSpacing: 15,
+              //                 mainAxisSpacing: 15,
+              //                 childAspectRatio: 0.7,
+              //               ),
+              //         ),
+              // ),
+              // const SliverToBoxAdapter(child: SizedBox(height: 80)),

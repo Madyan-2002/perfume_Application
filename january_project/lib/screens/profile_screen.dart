@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:january_project/Model/perfume_model.dart';
 import 'package:january_project/screens/cart_screen.dart';
 import 'package:january_project/screens/favorite_screen.dart';
@@ -61,43 +63,49 @@ class ProfileScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CartScreen(cart: cart, onGoShopping: () {
-                          Navigator.pop(context);
-                        },),
+                        builder: (context) => CartScreen(
+                          cart: cart,
+                          onGoShopping: () {
+                            Navigator.pop(context);
+                          },
+                        ),
                       ),
                     );
                   },
                 ),
-                _buildProfileOption(Icons.favorite_border, "Wishlist", (){
-                  
-                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FavoriteScreen(onGoShopping: () {
+                _buildProfileOption(Icons.favorite_border, "Wishlist", () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FavoriteScreen(
+                        onGoShopping: () {
                           Navigator.pop(context);
-                        },),
+                        },
                       ),
-                    );
-
+                    ),
+                  );
                 }),
                 _buildProfileOption(
-                  Icons.location_on_outlined,
-                  "Shipping Address",(){
-
-                  }
-                ),
-                _buildProfileOption(Icons.payment_outlined, "Payment Methods", (){
-
-                }),
+                    Icons.location_on_outlined, "Shipping Address", () {}),
+                _buildProfileOption(
+                    Icons.payment_outlined, "Payment Methods", () {}),
                 const Divider(),
-                _buildProfileOption(Icons.logout, "Logout",(){
-                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RegisterLoginScreen(),
-                      ),
-                    );
-                  
+                _buildProfileOption(Icons.logout, "Logout", () async {
+                  try {
+                    await GoogleSignIn().signOut();
+
+                    await FirebaseAuth.instance.signOut();
+
+                    if (context.mounted) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterLoginScreen()),
+                        (route) => false,
+                      );
+                    }
+                  } catch (e) {
+                    print("Error during logout: $e");
+                  }
                 }, isExit: true),
               ],
             ),
