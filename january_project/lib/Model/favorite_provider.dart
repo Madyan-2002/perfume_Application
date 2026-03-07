@@ -7,7 +7,7 @@ class FavoriteProvider extends ChangeNotifier {
 
   List<PerfumeModel> get favItems => _favItems;
   void clearAll() {
-  _favItems.clear(); // مسح القائمة بالكامل
+  _favItems.clear();
   notifyListeners(); // تنبيه الشاشات لتحديث الواجهة فوراً
 }
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:january_project/Model/perfume_model.dart';
 import 'package:january_project/screens/details_screen.dart';
@@ -35,13 +36,37 @@ class _HomeScreenState extends State<HomeScreen> {
     return perfumes.where((perfume) {
       final matchesCategory =
           selectedFilter == 'All' || perfume.category == selectedFilter;
-
       final searchByUser = perfume.name.toLowerCase().contains(
-        searchText.toLowerCase(),
-      );
-
+            searchText.toLowerCase(),
+          );
       return matchesCategory && searchByUser;
     }).toList();
+  }
+
+  // Toggle favorite per user
+  Future<void> toggleFavorite(PerfumeModel perfume) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final favDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('favorite')
+        .doc(perfume.id);
+
+    final snapshot = await favDoc.get();
+    if (snapshot.exists) {
+      await favDoc.delete();
+    } else {
+      await favDoc.set({
+        'id': perfume.id,
+        'name': perfume.name,
+        'price': perfume.price,
+        'image': perfume.image,
+        'category': perfume.category,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
   }
 
   @override
@@ -221,19 +246,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           final perfume = filtered[index];
-                          return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailsScreen(
-                                    mad: perfume,
-                                    cart: widget.cart,
-                                  ),
+                          return StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(FirebaseAuth.instance.currentUser!.uid)
+                                .collection('favorite')
+                                .doc(perfume.id)
+                                .snapshots(),
+                            builder: (context, favSnapshot) {
+                              final isFav =
+                                  favSnapshot.hasData && favSnapshot.data!.exists;
+
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailsScreen(
+                                        mad: perfume,
+                                        cart: widget.cart,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: ItemsCard(
+                                  perfume: perfume,
+                                  toggleFavorite: toggleFavorite,
+                                  isFav: isFav,
                                 ),
                               );
                             },
-                            child: ItemsCard(perfume: perfume),
                           );
                         },
                         childCount: filtered.length,
@@ -258,57 +300,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-
-/// ===== Animated Grid Products =====
-              // SliverPadding(
-              //   padding: const EdgeInsets.all(20),
-              //   sliver: fliteredPerfumes.isEmpty
-              //       ? const SliverToBoxAdapter(
-              //           child: Center(
-              //             child: Padding(
-              //               padding: EdgeInsets.only(top: 50),
-              //               child: Column(
-              //                 children: [
-              //                   Icon(
-              //                     Icons.search_off_rounded,
-              //                     size: 50,
-              //                     color: Colors.grey,
-              //                   ),
-              //                   SizedBox(height: 10),
-              //                   Text(
-              //                     "No items match your search",
-              //                     style: TextStyle(color: Colors.grey),
-              //                   ),
-              //                 ],
-              //               ),
-              //             ),
-              //           ),
-              //         )
-              //       : SliverGrid(
-              //           delegate: SliverChildBuilderDelegate((context, index) {
-              //             return InkWell(
-              //               onTap: () {
-              //                 Navigator.push(
-              //                   context,
-              //                   MaterialPageRoute(
-              //                     builder: (context) => DetailsScreen(
-              //                       mad: fliteredPerfumes[index],
-              //                       cart: widget.cart,
-              //                     ),
-              //                   ),
-              //                 );
-              //               },
-              //               child: ItemsCard(perfume: fliteredPerfumes[index]),
-              //             );
-              //           }, childCount: fliteredPerfumes.length),
-              //           gridDelegate:
-              //               const SliverGridDelegateWithFixedCrossAxisCount(
-              //                 crossAxisCount: 2,
-              //                 crossAxisSpacing: 15,
-              //                 mainAxisSpacing: 15,
-              //                 childAspectRatio: 0.7,
-              //               ),
-              //         ),
-              // ),
-              // const SliverToBoxAdapter(child: SizedBox(height: 80)),

@@ -15,6 +15,7 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   List<PerfumeModel> cart = [];
+
   int index = 0;
 
   void changeIndex(int newIndex) {
@@ -27,11 +28,13 @@ class _NavBarState extends State<NavBar> {
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       HomeScreen(cart: cart),
-      FavoriteScreen(onGoShopping: () => changeIndex(0)),
+      FavoriteScreen(
+        onGoShopping: () => changeIndex(0), // ✅ تعديل هنا
+      ),
       ProfileScreen(cart: cart),
       CartScreen(
         cart: cart,
-        onGoShopping: () => changeIndex(0), // برجعني للهوم
+        onGoShopping: () => changeIndex(0),
       ),
     ];
 
@@ -44,14 +47,20 @@ class _NavBarState extends State<NavBar> {
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey[400],
         currentIndex: index,
-        onTap: (value) => setState(() => index = value),
+        onTap: changeIndex,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favorite',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Cart',
@@ -63,11 +72,9 @@ class _NavBarState extends State<NavBar> {
 
   AppBar normalAppBar() {
     return AppBar(
-      leading: InkWell(
-        onTap: () {
-          changeIndex(0);
-        },
-        child: Icon(Icons.arrow_back_ios, color: Colors.white),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+        onPressed: () => changeIndex(0),
       ),
       backgroundColor: ColorClass.mad,
       elevation: 0,
@@ -84,29 +91,24 @@ class _NavBarState extends State<NavBar> {
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 15),
-          child: InkWell(
-            onTap: () {
-              if (index == 1) {}
-              if (index == 3) {}
-            },
-            child: CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.white24,
-              child: Icon(
-                index == 1
-                    ? Icons.format_list_bulleted
-                    : index == 2
-                    ? Icons.settings
-                    : index == 3
-                    ? Icons.delete_sweep
-                    : Icons.notifications_none,
-                color: Colors.white,
-                size: 20,
-              ),
+          child: CircleAvatar(
+            radius: 18,
+            backgroundColor: Colors.white24,
+            child: Icon(
+              _actionIcon(),
+              color: Colors.white,
+              size: 20,
             ),
           ),
         ),
       ],
     );
+  }
+
+  IconData _actionIcon() {
+    if (index == 1) return Icons.format_list_bulleted;
+    if (index == 2) return Icons.settings;
+    if (index == 3) return Icons.delete_sweep;
+    return Icons.notifications_none;
   }
 }

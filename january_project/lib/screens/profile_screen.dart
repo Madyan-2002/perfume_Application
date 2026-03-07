@@ -9,14 +9,18 @@ import 'package:january_project/styles/color_class.dart';
 
 class ProfileScreen extends StatelessWidget {
   final List<PerfumeModel> cart;
+
   const ProfileScreen({super.key, required this.cart});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: ColorClass.details,
       body: Column(
         children: [
+          /// Header
           Container(
             height: 250,
             width: double.infinity,
@@ -32,26 +36,28 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   radius: 50,
-                  backgroundImage: AssetImage('assets/images/luffy.jpeg'),
+                  backgroundImage: AssetImage(
+                    'assets/images/luffy.jpeg',
+                  ),
                 ),
                 const SizedBox(height: 15),
                 Text(
-                  "Madyan Malkawi",
-                  style: TextStyle(
+                  user?.displayName ?? "User",
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Averia',
                   ),
                 ),
                 Text(
-                  "madyan.m005@gmail.com",
-                  style: TextStyle(color: Colors.grey),
+                  user?.email ?? "No email",
+                  style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),
           ),
 
-          // 2. قائمة الخيارات
+          /// Options
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -73,40 +79,55 @@ class ProfileScreen extends StatelessWidget {
                     );
                   },
                 ),
-                _buildProfileOption(Icons.favorite_border, "Wishlist", () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FavoriteScreen(
-                        onGoShopping: () {
-                          Navigator.pop(context);
-                        },
+                _buildProfileOption(
+                  Icons.favorite_border,
+                  "Wishlist",
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>  FavoriteScreen(
+                           onGoShopping: () => Navigator.pop(context),
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  },
+                ),
                 _buildProfileOption(
-                    Icons.location_on_outlined, "Shipping Address", () {}),
+                  Icons.location_on_outlined,
+                  "Shipping Address",
+                  () {},
+                ),
                 _buildProfileOption(
-                    Icons.payment_outlined, "Payment Methods", () {}),
+                  Icons.payment_outlined,
+                  "Payment Methods",
+                  () {},
+                ),
                 const Divider(),
-                _buildProfileOption(Icons.logout, "Logout", () async {
-                  try {
-                    await GoogleSignIn().signOut();
+                _buildProfileOption(
+                  Icons.logout,
+                  "Logout",
+                  () async {
+                    try {
+                      await GoogleSignIn().signOut();
 
-                    await FirebaseAuth.instance.signOut();
+                      await FirebaseAuth.instance.signOut();
 
-                    if (context.mounted) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterLoginScreen()),
-                        (route) => false,
-                      );
+                      if (context.mounted) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterLoginScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      }
+                    } catch (e) {
+                      debugPrint("Logout Error: $e");
                     }
-                  } catch (e) {
-                    print("Error during logout: $e");
-                  }
-                }, isExit: true),
+                  },
+                  isExit: true,
+                ),
               ],
             ),
           ),
@@ -122,8 +143,17 @@ class ProfileScreen extends StatelessWidget {
     bool isExit = false,
   }) {
     return ListTile(
-      leading: Icon(icon, color: isExit ? Colors.redAccent : ColorClass.icons),
-      title: Text(title, style: TextStyle(fontWeight: FontWeight.w500)),
+      leading: Icon(
+        icon,
+        color: isExit ? Colors.redAccent : ColorClass.icons,
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+        ),
+      ),
       trailing: const Icon(
         Icons.arrow_forward_ios,
         size: 16,

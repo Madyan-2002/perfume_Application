@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:january_project/Model/favorite_provider.dart';
 import 'package:january_project/Model/perfume_model.dart';
 import 'package:january_project/styles/color_class.dart';
-import 'package:provider/provider.dart';
 
 class ItemsCard extends StatelessWidget {
   final PerfumeModel perfume;
-  const ItemsCard({super.key, required this.perfume});
+  final Function(PerfumeModel)? toggleFavorite;
+  final bool isFav; // الحالة الحقيقية للفيفوريت
+
+  const ItemsCard({
+    super.key,
+    required this.perfume,
+    this.toggleFavorite,
+    required this.isFav,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +46,10 @@ class ItemsCard extends StatelessWidget {
                     tag: perfume.image,
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: Image.asset(perfume.image, fit: BoxFit.contain),
+                      child: Image.asset(
+                        perfume.image,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
@@ -57,11 +66,9 @@ class ItemsCard extends StatelessWidget {
                       perfume.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: ColorClass.darkGrey,
-                        fontFamily: 'Averia',
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -71,7 +78,6 @@ class ItemsCard extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         color: ColorClass.price,
-                        fontFamily: 'Averia',
                       ),
                     ),
                   ],
@@ -85,7 +91,7 @@ class ItemsCard extends StatelessWidget {
             right: 15,
             child: InkWell(
               onTap: () {
-                context.read<FavoriteProvider>().toggleFavorite(perfume);
+                if (toggleFavorite != null) toggleFavorite!(perfume);
               },
               child: Container(
                 padding: const EdgeInsets.all(6),
@@ -95,10 +101,8 @@ class ItemsCard extends StatelessWidget {
                   boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                 ),
                 child: Icon(
-                  context.watch<FavoriteProvider>().isFavorite(perfume)
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: Colors.redAccent,
+                  isFav ? Icons.favorite : Icons.favorite_border,
+                  color: isFav ? Colors.red : Colors.grey,
                   size: 18,
                 ),
               ),
