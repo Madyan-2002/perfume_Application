@@ -5,7 +5,7 @@ import 'package:january_project/styles/color_class.dart';
 class ItemsCard extends StatelessWidget {
   final PerfumeModel perfume;
   final Function(PerfumeModel)? toggleFavorite;
-  final bool isFav; // الحالة الحقيقية للفيفوريت
+  final bool isFav; 
 
   const ItemsCard({
     super.key,
@@ -91,6 +91,7 @@ class ItemsCard extends StatelessWidget {
             right: 15,
             child: InkWell(
               onTap: () {
+                  // إذا كانت الدالة موجودة يتم تنفيذها
                 if (toggleFavorite != null) toggleFavorite!(perfume);
               },
               child: Container(

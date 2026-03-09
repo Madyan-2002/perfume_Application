@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:january_project/screens/register_login_screen.dart';
 import 'package:january_project/widget/_build_list_view.dart';
 
-
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
 
@@ -19,7 +18,12 @@ class _AdminScreenState extends State<AdminScreen> {
   final imgController = TextEditingController();
 
   final List<String> categories = [
-    'Men', 'Women', 'Packages', 'Kids', 'Hair', 'Body',
+    'Men',
+    'Women',
+    'Packages',
+    'Kids',
+    'Hair',
+    'Body',
   ];
   String selectedCategory = "Men";
 
@@ -125,8 +129,7 @@ class _AdminScreenState extends State<AdminScreen> {
                     : const Text(
                         "Add Perfume",
                         style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
               ),
             ),
@@ -172,6 +175,7 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
+  // دالة إضافة عطر جديد إلى Firestore
   Future<void> _addPerfume() async {
     if (nameController.text.isEmpty || priceController.text.isEmpty) return;
 
@@ -197,9 +201,9 @@ class _AdminScreenState extends State<AdminScreen> {
     await FirebaseAuth.instance.signOut();
     if (!mounted) return;
 
-  Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(builder: (context) => const RegisterLoginScreen()), 
-    (Route<dynamic> route) => false,
-  );
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const RegisterLoginScreen()),
+      (Route<dynamic> route) => false,
+    );
   }
 }

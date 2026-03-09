@@ -187,13 +187,21 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),
-                        onPressed: () {
-                          if (!mounted) return;
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (_) => const NavBar()),
-                            (route) => false,
-                          );
+                        onPressed: () async {
+                          try {
+                            // إنشاء مستخدم مجهول في Firebase
+                            await FirebaseAuth.instance.signInAnonymously();
+
+                            if (!mounted) return;
+
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (_) => const NavBar()),
+                              (route) => false,
+                            );
+                          } catch (e) {
+                            debugPrint("Guest Login Error: $e");
+                          }
                         },
                         child: Text(
                           'Continue as Guest',
@@ -372,43 +380,47 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
   }
 
   Future<void> signInWithGoogle() async {
-  try {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
 
-    UserCredential userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential userCred =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
-    // التحقق مما إذا كان المستخدم جديداً لإضافته إلى Firestore
-    final userDoc = await firestore.collection('users').doc(userCred.user!.uid).get();
-    
-    if (!userDoc.exists) {
-      // تعديل بسيط: نأخذ الإيميل من userCred لأن controller قد يكون فارغاً في حال دخول جوجل
-      await firestore.collection('users').doc(userCred.user!.uid).set({
-        'email': userCred.user!.email,
-        'role': 'user',
-      });
+      // التحقق مما إذا كان المستخدم جديداً لإضافته إلى Firestore
+      final userDoc =
+          await firestore.collection('users').doc(userCred.user!.uid).get();
+
+      if (!userDoc.exists) {
+        // تعديل بسيط: نأخذ الإيميل من userCred لأن controller قد يكون فارغاً في حال دخول جوجل
+        await firestore.collection('users').doc(userCred.user!.uid).set({
+          'email': userCred.user!.email,
+          'role': 'user',
+        });
+      }
+
+      // بعد النجاح، وجه المستخدم بناءً على الـ Role
+      _handleNavigation(userCred.user!.uid);
+    } catch (e) {
+      print("Google Sign-In Error: $e");
     }
-    
-    // بعد النجاح، وجه المستخدم بناءً على الـ Role
-    _handleNavigation(userCred.user!.uid);
-
-  } catch (e) {
-    print("Google Sign-In Error: $e");
   }
-}
 
 // دالة مساعدة للتوجيه (Navigation) لتقليل تكرار الكود
-void _handleNavigation(String uid) async {
-  final doc = await firestore.collection('users').doc(uid).get();
-  if (doc.exists) {
-    String role = doc['role'];
-    Widget nextScreen = (role == 'admin') ? const AdminScreen() : const NavBar();
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => nextScreen));
+  void _handleNavigation(String uid) async {
+    final doc = await firestore.collection('users').doc(uid).get();
+    if (doc.exists) {
+      String role = doc['role'];
+      Widget nextScreen =
+          (role == 'admin') ? const AdminScreen() : const NavBar();
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (_) => nextScreen));
+    }
   }
-}
 }

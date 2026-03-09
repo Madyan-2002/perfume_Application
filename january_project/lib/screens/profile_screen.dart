@@ -20,7 +20,8 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: ColorClass.details,
       body: Column(
         children: [
-          /// Header
+
+          /// HEADER
           Container(
             height: 250,
             width: double.infinity,
@@ -41,6 +42,8 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
+
+                /// USER NAME
                 Text(
                   user?.displayName ?? "User",
                   style: const TextStyle(
@@ -49,6 +52,8 @@ class ProfileScreen extends StatelessWidget {
                     fontFamily: 'Averia',
                   ),
                 ),
+
+                /// EMAIL
                 Text(
                   user?.email ?? "No email",
                   style: const TextStyle(color: Colors.grey),
@@ -57,11 +62,32 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
 
-          /// Options
+          /// OPTIONS LIST
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
+
+                /// ACCOUNT SECTION
+                _sectionTitle("Account"),
+
+                _buildProfileOption(
+                  Icons.person_outline,
+                  "Edit Profile",
+                  () {},
+                ),
+
+                _buildProfileOption(
+                  Icons.lock_outline,
+                  "Change Password",
+                  () {},
+                ),
+
+                const Divider(),
+
+                /// SHOPPING SECTION
+                _sectionTitle("Shopping"),
+
                 _buildProfileOption(
                   Icons.shopping_bag_outlined,
                   "My Orders",
@@ -79,6 +105,7 @@ class ProfileScreen extends StatelessWidget {
                     );
                   },
                 ),
+
                 _buildProfileOption(
                   Icons.favorite_border,
                   "Wishlist",
@@ -86,31 +113,70 @@ class ProfileScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>  FavoriteScreen(
-                           onGoShopping: () => Navigator.pop(context),
+                        builder: (context) => FavoriteScreen(
+                          onGoShopping: () => Navigator.pop(context),
                         ),
                       ),
                     );
                   },
                 ),
+
                 _buildProfileOption(
                   Icons.location_on_outlined,
                   "Shipping Address",
                   () {},
                 ),
+
                 _buildProfileOption(
                   Icons.payment_outlined,
                   "Payment Methods",
                   () {},
                 ),
+
                 const Divider(),
+
+                /// SETTINGS SECTION
+                _sectionTitle("Settings"),
+
+                _buildProfileOption(
+                  Icons.notifications_none,
+                  "Notifications",
+                  () {},
+                ),
+
+                _buildProfileOption(
+                  Icons.dark_mode_outlined,
+                  "Dark Mode",
+                  () {},
+                ),
+
+                _buildProfileOption(
+                  Icons.language,
+                  "Language",
+                  () {},
+                ),
+
+                _buildProfileOption(
+                  Icons.help_outline,
+                  "Help Center",
+                  () {},
+                ),
+
+                _buildProfileOption(
+                  Icons.info_outline,
+                  "About App",
+                  () {},
+                ),
+
+                const Divider(),
+
+                /// LOGOUT
                 _buildProfileOption(
                   Icons.logout,
                   "Logout",
                   () async {
                     try {
                       await GoogleSignIn().signOut();
-
                       await FirebaseAuth.instance.signOut();
 
                       if (context.mounted) {
@@ -136,6 +202,22 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  /// SECTION TITLE
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, bottom: 10),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
+        ),
+      ),
+    );
+  }
+
+  /// PROFILE OPTION TILE
   Widget _buildProfileOption(
     IconData icon,
     String title,
