@@ -18,7 +18,7 @@ class PerfumeModel {
   final String description;
   final bool isFav;
   final String category;
-  // int quantity;
+  final int quantity;
 
   PerfumeModel({
     this.id,
@@ -28,19 +28,22 @@ class PerfumeModel {
     required this.description,
     this.isFav = false,
     required this.category,
-    // this.quantity = 1,
+     this.quantity = 1,
   });
 
   factory PerfumeModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return PerfumeModel(
         id: doc.id,
-        image: data['img'] ?? '',
+        image: data['img'] ?? data['image'] ?? '',  // بعض البيانات  img  وبعضها  image 
         name: data['name'] ?? '',
         price: (data['price'] as num?)?.toDouble() ?? 0.0,
         description: data['description'] ?? '',
         category: data['category'] ?? '',
-        isFav: data['isFav'] ?? false);
+        isFav: data['isFav'] ?? false,
+        quantity: data['quantity'] ?? 1,
+        );
+
   }
 
   Map<String, dynamic> toMap() {

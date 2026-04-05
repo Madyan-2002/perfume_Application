@@ -1,13 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:january_project/Model/perfume_model.dart';
 import 'package:january_project/widget/custom_cart.dart';
 import 'package:january_project/styles/color_class.dart';
 
 class CartScreen extends StatefulWidget {
-  final List<PerfumeModel> cart;
-  final VoidCallback onGoShopping; 
+  final VoidCallback onGoShopping;
 
-  const CartScreen({super.key, required this.cart, required this.onGoShopping});
+  const CartScreen({super.key, required this.onGoShopping});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -16,52 +17,182 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return const Scaffold(
+        body: Center(child: Text("Please login first")),
+      );
+    }
+
     return Scaffold(
       backgroundColor: ColorClass.details,
-      body: widget.cart.isEmpty
-          ? _buildEmptyState()
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    itemCount: widget.cart.length,
-                    itemBuilder: (context, index) {
-                      final item = widget.cart[index];
-                      return Dismissible(
-                        key: UniqueKey(),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
-                          margin: const EdgeInsets.symmetric(vertical: 8), 
-                          decoration: BoxDecoration(
-                            color: Colors.redAccent,
-                            borderRadius: BorderRadius.circular(15),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('cart')
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final cartItems = snapshot.data!.docs
+              .map((doc) => PerfumeModel.fromFirestore(doc))
+              .toList();
+
+          if (cartItems.isEmpty) {
+            return _buildEmptyState();
+          }
+
+          return Column(
+            children: [
+              /// 🔥 HEADER
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "My Cart (${cartItems.length})",
+                      style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    /// 🗑️ CLEAR ALL
+                    InkWell(
+                      onTap: () async {
+                        final confirm = await showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            title: const Text("Clear Cart"),
+                            content: const Text(
+                                "Are you sure you want to delete all items?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, false),
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, true),
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
                           ),
-                          child: const Icon(Icons.delete_outline, color: Colors.white, size: 30),
+                        );
+
+                        if (confirm == true) {
+                          final collection = FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .collection('cart');
+
+                          final snapshot = await collection.get();
+
+                          for (var doc in snapshot.docs) {
+                            await doc.reference.delete();
+                          }
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          shape: BoxShape.circle,
                         ),
-                        onDismissed: (direction) {
-                          setState(() {
-                            widget.cart.removeAt(index);
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("${item.name} removed from cart"), duration: const Duration(seconds: 1)),
-                          );
-                        },
-                        child: CustomCart(cart: item),
-                      );
-                    },
-                  ),
+                        child: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                // حاوية السعر الإجمالي
-                _buildTotalSection(),
-              ],
-            ),
+              ),
+
+              /// 🔥 DIVIDER
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Divider(
+                  thickness: 1,
+                  color: Colors.grey.withOpacity(0.3),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              /// 🔥 LIST
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  itemCount: cartItems.length,
+                  itemBuilder: (context, index) {
+                    final item = cartItems[index];
+
+                    return Dismissible(
+                      key: ValueKey(item.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 15),
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: const Icon(Icons.delete,
+                            color: Colors.white, size: 30),
+                      ),
+                      onDismissed: (_) async {
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(user.uid)
+                            .collection('cart')
+                            .doc(item.id)
+                            .delete();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text("${item.name} removed from cart"),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 5),
+                        child: CustomCart(cart: item),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              /// 🔥 TOTAL PRICE
+              _buildTotalSection(cartItems),
+            ],
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildTotalSection() {
+  /// 🔥 TOTAL
+  Widget _buildTotalSection(List<PerfumeModel> cartItems) {
     return Container(
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
@@ -71,16 +202,19 @@ class _CartScreenState extends State<CartScreen> {
           topRight: Radius.circular(35),
         ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, -5))
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
+          )
         ],
       ),
-      child: SafeArea( 
+      child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'Total Price',
@@ -93,7 +227,7 @@ class _CartScreenState extends State<CartScreen> {
               ],
             ),
             Text(
-              '${calculateTotal(widget.cart).toStringAsFixed(2)} \$',
+              '${calculateTotal(cartItems).toStringAsFixed(2)} \$',
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 26,
@@ -106,10 +240,13 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  /// 🔥 CALCULATE
   double calculateTotal(List<PerfumeModel> cart) {
-    return cart.fold(0, (sum, item) => sum + item.price);
+    return cart.fold(
+        0, (sum, item) => sum + (item.price * (item.quantity ?? 1)));
   }
 
+  /// 🔥 EMPTY STATE
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
@@ -117,37 +254,30 @@ class _CartScreenState extends State<CartScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.local_mall_outlined, size: 100, color: Colors.grey[300]),
+            Icon(Icons.local_mall_outlined,
+                size: 100, color: Colors.grey[300]),
             const SizedBox(height: 24),
             const Text(
-              "Your scent collection is empty",
-              textAlign: TextAlign.center,
+              "Your cart is empty",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF2D2D2D),
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              "Every great story starts with a fragrance. Begin yours by exploring our signature collection.",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15, color: Colors.grey[600], height: 1.5),
+              "Start adding your favorite perfumes",
+              style: TextStyle(color: Colors.grey[600]),
             ),
             const SizedBox(height: 40),
-            SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: widget.onGoShopping,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorClass.mad,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  elevation: 5,
-                ),
-                child: const Text("Start Exploring", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ElevatedButton(
+              onPressed: widget.onGoShopping,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorClass.mad,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               ),
+              child: const Text("Start Shopping"),
             ),
           ],
         ),

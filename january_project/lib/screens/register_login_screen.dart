@@ -16,6 +16,7 @@ class RegisterLoginScreen extends StatefulWidget {
 }
 
 class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
+  TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -77,6 +78,16 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
                   ),
 
                   const SizedBox(height: 25),
+                  // user Name
+                  CustomTextField(
+                    controller: nameController,
+                    keyType: TextInputType.name,
+                    labl: 'Name',
+                    hint: 'Enter your name',
+                    preIcon: const Icon(Icons.person_outline),
+                  ),
+
+                  const SizedBox(height: 15),
 
                   /// 🔹 Email
                   CustomTextField(
@@ -235,10 +246,7 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
                         const SizedBox(width: 12),
                         const Text(
                           'Sign in with Google',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.black87, fontSize: 16),
                         ),
                       ],
                     ),
@@ -280,6 +288,7 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
     try {
       CollectionReference users = firestore.collection('users');
       await users.doc(userCred.user!.uid).set({
+        'name' :nameController.text.trim(),
         'email': emailController.text.trim(),
         'role': 'user',
       });
@@ -296,11 +305,11 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
   }) async {
     try {
       // نحفظ النتيجة في متغير userCred
-      UserCredential userCred =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailAddress,
-        password: password,
-      );
+      UserCredential userCred = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailAddress,
+            password: password,
+          );
 
       await addUser(userCred);
 
@@ -390,16 +399,19 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
         idToken: googleAuth?.idToken,
       );
 
-      UserCredential userCred =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential userCred = await FirebaseAuth.instance
+          .signInWithCredential(credential);
 
       // التحقق مما إذا كان المستخدم جديداً لإضافته إلى Firestore
-      final userDoc =
-          await firestore.collection('users').doc(userCred.user!.uid).get();
+      final userDoc = await firestore
+          .collection('users')
+          .doc(userCred.user!.uid)
+          .get();
 
       if (!userDoc.exists) {
         // تعديل بسيط: نأخذ الإيميل من userCred لأن controller قد يكون فارغاً في حال دخول جوجل
         await firestore.collection('users').doc(userCred.user!.uid).set({
+          'name': userCred.user!.displayName ?? '',
           'email': userCred.user!.email,
           'role': 'user',
         });
@@ -412,15 +424,17 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
     }
   }
 
-// دالة مساعدة للتوجيه (Navigation) لتقليل تكرار الكود
+  // دالة مساعدة للتوجيه (Navigation) لتقليل تكرار الكود
   void _handleNavigation(String uid) async {
     final doc = await firestore.collection('users').doc(uid).get();
     if (doc.exists) {
       String role = doc['role'];
-      Widget nextScreen =
-          (role == 'admin') ? const AdminScreen() : const NavBar();
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (_) => nextScreen));
+      Widget nextScreen = (role == 'admin')
+          ? const AdminScreen()
+          : const NavBar();
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => nextScreen));
     }
   }
 }

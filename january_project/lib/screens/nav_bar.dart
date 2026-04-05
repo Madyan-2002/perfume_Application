@@ -31,11 +31,8 @@ class _NavBarState extends State<NavBar> {
       FavoriteScreen(
         onGoShopping: () => changeIndex(0), // ✅ تعديل هنا
       ),
-      ProfileScreen(cart: cart),
-      CartScreen(
-        cart: cart,
-        onGoShopping: () => changeIndex(0),
-      ),
+      CartScreen(onGoShopping: () => changeIndex(0)),
+      ProfileScreen(),
     ];
 
     return Scaffold(
@@ -49,22 +46,16 @@ class _NavBarState extends State<NavBar> {
         currentIndex: index,
         onTap: changeIndex,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favorite',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Cart',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
@@ -94,11 +85,7 @@ class _NavBarState extends State<NavBar> {
           child: CircleAvatar(
             radius: 18,
             backgroundColor: Colors.white24,
-            child: Icon(
-              _actionIcon(),
-              color: Colors.white,
-              size: 20,
-            ),
+            child: Icon(_actionIcon(), color: Colors.white, size: 20),
           ),
         ),
       ],

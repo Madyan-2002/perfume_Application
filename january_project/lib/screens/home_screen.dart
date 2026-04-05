@@ -37,8 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
       final matchesCategory =
           selectedFilter == 'All' || perfume.category == selectedFilter;
       final searchByUser = perfume.name.toLowerCase().contains(
-            searchText.toLowerCase(),
-          );
+        searchText.toLowerCase(),
+      );
       return matchesCategory && searchByUser;
     }).toList();
   }
@@ -138,8 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        NotificationsScreen(),
+                                    builder: (context) => NotificationsScreen(),
                                   ),
                                 );
                               },
@@ -214,9 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const SliverFillRemaining(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: Center(child: CircularProgressIndicator()),
                     );
                   }
 
@@ -243,50 +240,45 @@ class _HomeScreenState extends State<HomeScreen> {
                   return SliverPadding(
                     padding: const EdgeInsets.all(20),
                     sliver: SliverGrid(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final perfume = filtered[index];
-                          return StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(FirebaseAuth.instance.currentUser!.uid)
-                                .collection('favorite')
-                                .doc(perfume.id)
-                                .snapshots(),
-                            builder: (context, favSnapshot) {
-                              final isFav =
-                                  favSnapshot.hasData && favSnapshot.data!.exists;
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final perfume = filtered[index];
+                        return StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                              .collection('favorite')
+                              .doc(perfume.id)
+                              .snapshots(),
+                          builder: (context, favSnapshot) {
+                            final isFav =
+                                favSnapshot.hasData && favSnapshot.data!.exists;
 
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetailsScreen(
-                                        mad: perfume,
-                                        cart: widget.cart,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: ItemsCard(
-                                  perfume: perfume,
-                                  toggleFavorite: toggleFavorite,
-                                  isFav: isFav,
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        childCount: filtered.length,
-                      ),
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        DetailsScreen(mad: perfume),
+                                  ),
+                                );
+                              },
+                              child: ItemsCard(
+                                perfume: perfume,
+                                toggleFavorite: toggleFavorite,
+                                isFav: isFav,
+                              ),
+                            );
+                          },
+                        );
+                      }, childCount: filtered.length),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 15,
-                        mainAxisSpacing: 15,
-                        childAspectRatio: 0.7,
-                      ),
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 15,
+                            mainAxisSpacing: 15,
+                            childAspectRatio: 0.7,
+                          ),
                     ),
                   );
                 },

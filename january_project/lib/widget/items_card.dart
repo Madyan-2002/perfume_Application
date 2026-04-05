@@ -46,7 +46,7 @@ class ItemsCard extends StatelessWidget {
                     tag: perfume.image,
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: Image.asset(
+                      child: Image.network(
                         perfume.image,
                         fit: BoxFit.contain,
                       ),

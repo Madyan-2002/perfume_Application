@@ -13,3 +13,4 @@ class ColorClass {
   static Color darkGrey = Color(0xFF333333);
   static Color lightGrey = Color(0xFFF8F8F8);
 }
+

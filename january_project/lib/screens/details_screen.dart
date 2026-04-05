@@ -1,22 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:january_project/Model/perfume_model.dart';
 import 'package:january_project/styles/color_class.dart';
 
 class DetailsScreen extends StatelessWidget {
   final PerfumeModel mad;
-  final List<PerfumeModel> cart;
-  const DetailsScreen({super.key, required this.mad, required this.cart});
+
+  const DetailsScreen({super.key, required this.mad});
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: ColorClass.details,
       appBar: AppBar(
         leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
+          onTap: () => Navigator.pop(context),
           child: Icon(Icons.arrow_back_ios, color: ColorClass.lightGrey),
         ),
         backgroundColor: ColorClass.mad,
@@ -30,20 +31,19 @@ class DetailsScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        actions: [
+        actions: const [
           Padding(
-            padding: const EdgeInsets.all(10),
-            child: Icon(Icons.favorite, color: ColorClass.lightGrey),
+            padding: EdgeInsets.all(10),
+            child: Icon(Icons.favorite, color: Colors.white),
           ),
         ],
       ),
+
       body: Padding(
-        padding: const EdgeInsets.all(
-          20.0,
-        ), // زيادة بسيطة في الحواف لترتيب المحتوى
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // حاوية الصورة
+            /// 🔹 IMAGE
             Container(
               height: height * 0.45,
               width: double.infinity,
@@ -61,7 +61,12 @@ class DetailsScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.asset(mad.image, fit: BoxFit.contain),
+                child: Image.network(
+                  mad.image,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) =>
+                      const Icon(Icons.image_not_supported, size: 50),
+                ),
               ),
             ),
 
@@ -69,6 +74,7 @@ class DetailsScreen extends StatelessWidget {
             const Divider(thickness: 1.2),
             const SizedBox(height: 15),
 
+            /// 🔹 DESCRIPTION
             Expanded(
               child: SingleChildScrollView(
                 child: Text(
@@ -83,9 +89,11 @@ class DetailsScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
+            /// 🔹 PRICE + ADD TO CART
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                /// PRICE
                 Card(
                   elevation: 5,
                   color: ColorClass.details,
@@ -103,28 +111,64 @@ class DetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+
+                /// 🔥 ADD TO CART BUTTON
                 InkWell(
-                  onTap: () {
-                    cart.add(mad);
+                  onTap: () async {
+                    final user = FirebaseAuth.instance.currentUser;
+
+                    if (user == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Please login first")),
+                      );
+                      return;
+                    }
+
+                    final cartRef = FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.uid)
+                        .collection('cart')
+                        .doc(mad.id);
+
+                    final doc = await cartRef.get();
+
+                    if (doc.exists) {
+                      /// ✅ المنتج موجود → زوّد الكمية
+                      await cartRef.update({
+                        'quantity': FieldValue.increment(1),
+                      });
+                    } else {
+                      /// ✅ منتج جديد
+                      await cartRef.set({
+                        'id': mad.id,
+                        'name': mad.name,
+                        'price': mad.price,
+                        'img': mad.image,
+                        'category': mad.category,
+                        'description': mad.description,
+                        'quantity': 1,
+                        'timestamp': FieldValue.serverTimestamp(),
+                      });
+                    }
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("${mad.name} added to cart!"),
-                        duration: const Duration(seconds: 1),
+                        content: Text("${mad.name} added to cart 🛒"),
                         backgroundColor: ColorClass.mad,
-                        behavior: SnackBarBehavior.floating,
                       ),
                     );
                   },
+
                   child: Card(
                     elevation: 5,
                     color: ColorClass.mad,
                     child: SizedBox(
                       height: 45,
                       width: MediaQuery.of(context).size.width * 0.55,
-                      child: Center(
+                      child: const Center(
                         child: Text(
                           "ADD TO CART",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             fontSize: 16,

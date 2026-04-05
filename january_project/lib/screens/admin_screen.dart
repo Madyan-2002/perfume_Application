@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:january_project/screens/register_login_screen.dart';
 import 'package:january_project/widget/_build_list_view.dart';
 
@@ -15,7 +19,6 @@ class _AdminScreenState extends State<AdminScreen> {
   final nameController = TextEditingController();
   final priceController = TextEditingController();
   final descController = TextEditingController();
-  final imgController = TextEditingController();
 
   final List<String> categories = [
     'Men',
@@ -28,6 +31,11 @@ class _AdminScreenState extends State<AdminScreen> {
   String selectedCategory = "Men";
 
   bool isLoading = false;
+  
+   final storageRef = FirebaseStorage.instance.ref();
+  String? imgName;
+
+  String? imgUrl;
 
   final Color primary = const Color(0xFF1C1C1C);
   final Color gold = const Color(0xFFC6A75E);
@@ -97,7 +105,43 @@ class _AdminScreenState extends State<AdminScreen> {
             _inputField("Perfume Name", nameController),
             _inputField("Price", priceController),
             _inputField("Description", descController, maxLines: 2),
-            _inputField("Image URL", imgController),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: .spaceBetween,
+
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: .circular(20)),
+                  ),
+                  onPressed: () async {
+                    final ImagePicker imagePicker = ImagePicker();
+                    final img = await imagePicker.pickImage(
+                      source: ImageSource.gallery,
+                    );
+
+                    final imgRef = storageRef.child(img!.name);
+                    imgName = img.name;
+                    setState(() {});
+                    await imgRef.putFile(File(img.path));
+
+                    imgUrl = await imgRef.getDownloadURL();
+                    setState(() {});
+                  },
+                  child: Text('Choose img'),
+                ),
+                Container(
+                  width: 150,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: .circular(15),
+                  ),
+                  child: Center(child: Text(imgName?.substring(0, 10) ?? '')),
+              
+                ),
+              ]
+            ),
             const SizedBox(height: 10),
             DropdownButtonFormField(
               value: selectedCategory,
@@ -185,14 +229,15 @@ class _AdminScreenState extends State<AdminScreen> {
       'name': nameController.text,
       'price': double.tryParse(priceController.text) ?? 0,
       'description': descController.text,
-      'img': imgController.text,
+      'img': imgUrl,
       'category': selectedCategory,
     });
 
     nameController.clear();
     priceController.clear();
     descController.clear();
-    imgController.clear();
+    imgUrl = null;
+    imgName = null;
 
     setState(() => isLoading = false);
   }
