@@ -79,13 +79,14 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
 
                   const SizedBox(height: 25),
                   // user Name
-                  CustomTextField(
-                    controller: nameController,
-                    keyType: TextInputType.name,
-                    labl: 'Name',
-                    hint: 'Enter your name',
-                    preIcon: const Icon(Icons.person_outline),
-                  ),
+                  if (!isLogin)
+                    CustomTextField(
+                      controller: nameController,
+                      keyType: TextInputType.name,
+                      labl: 'Name',
+                      hint: 'Enter your name',
+                      preIcon: const Icon(Icons.person_outline),
+                    ),
 
                   const SizedBox(height: 15),
 
@@ -288,7 +289,7 @@ class _RegisterLoginScreenState extends State<RegisterLoginScreen> {
     try {
       CollectionReference users = firestore.collection('users');
       await users.doc(userCred.user!.uid).set({
-        'name' :nameController.text.trim(),
+        'name': nameController.text.trim(),
         'email': emailController.text.trim(),
         'role': 'user',
       });

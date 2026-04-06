@@ -172,7 +172,9 @@ class _IntroScreenState extends State<IntroScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: 8,
-      width: _currentIndex == index ? 24 : 8, // هذا يحول النقطة من مجرد دائرة إلى مستطيل عريض، 
+      width: _currentIndex == index
+          ? 24
+          : 8, // هذا يحول النقطة من مجرد دائرة إلى مستطيل عريض،
       margin: const EdgeInsets.only(right: 5),
       decoration: BoxDecoration(
         color: _currentIndex == index ? ColorClass.mad : Colors.grey[300],

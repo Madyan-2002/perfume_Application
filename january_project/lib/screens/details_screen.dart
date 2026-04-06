@@ -14,7 +14,7 @@ class DetailsScreen extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: ColorClass.details,
+      backgroundColor: ColorClass.backG,
       appBar: AppBar(
         leading: InkWell(
           onTap: () => Navigator.pop(context),
@@ -181,6 +181,29 @@ class DetailsScreen extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+
+      /// 🔹 THE FULLY MODIFIED BOTTOM APP BAR 🔹
+      bottomNavigationBar: BottomAppBar(
+        color: ColorClass.mad,
+        shape: const CircularNotchedRectangle(),
+
+        /// 🔹 [تعديل] 🔹: تحديد الارتفاع ليكون أقل (مثلاً 40) لجعله نحيفاً
+        height: 40,
+
+        /// 🔹 [تعديل] 🔹: إزالة أي حشوات افتراضية لتقليص المساحة
+        padding: EdgeInsets.zero,
+
+        child: Container(
+          // يمكنك ترك الـ Row فارغاً هنا تماماً
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // فارغ كما طلبت
+            ],
+          ),
         ),
       ),
     );

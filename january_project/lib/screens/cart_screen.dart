@@ -20,13 +20,11 @@ class _CartScreenState extends State<CartScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: Text("Please login first")),
-      );
+      return const Scaffold(body: Center(child: Text("Please login first")));
     }
 
     return Scaffold(
-      backgroundColor: ColorClass.details,
+      backgroundColor: ColorClass.backG,
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -74,16 +72,15 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             title: const Text("Clear Cart"),
                             content: const Text(
-                                "Are you sure you want to delete all items?"),
+                              "Are you sure you want to delete all items?",
+                            ),
                             actions: [
                               TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, false),
+                                onPressed: () => Navigator.pop(context, false),
                                 child: const Text("Cancel"),
                               ),
                               TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, true),
+                                onPressed: () => Navigator.pop(context, true),
                                 child: const Text(
                                   "Delete",
                                   style: TextStyle(color: Colors.red),
@@ -148,13 +145,18 @@ class _CartScreenState extends State<CartScreen> {
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.only(right: 20),
                         margin: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 15),
+                          vertical: 8,
+                          horizontal: 15,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.redAccent,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: const Icon(Icons.delete,
-                            color: Colors.white, size: 30),
+                        child: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                          size: 30,
+                        ),
                       ),
                       onDismissed: (_) async {
                         await FirebaseFirestore.instance
@@ -166,15 +168,16 @@ class _CartScreenState extends State<CartScreen> {
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content:
-                                Text("${item.name} removed from cart"),
+                            content: Text("${item.name} removed from cart"),
                             duration: const Duration(seconds: 1),
                           ),
                         );
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
+                          horizontal: 15,
+                          vertical: 5,
+                        ),
                         child: CustomCart(cart: item),
                       ),
                     );
@@ -206,7 +209,7 @@ class _CartScreenState extends State<CartScreen> {
             color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, -5),
-          )
+          ),
         ],
       ),
       child: SafeArea(
@@ -242,8 +245,7 @@ class _CartScreenState extends State<CartScreen> {
 
   /// 🔥 CALCULATE
   double calculateTotal(List<PerfumeModel> cart) {
-    return cart.fold(
-        0, (sum, item) => sum + (item.price * (item.quantity ?? 1)));
+    return cart.fold(0, (sum, item) => sum + (item.price * (item.quantity)));
   }
 
   /// 🔥 EMPTY STATE
@@ -254,15 +256,11 @@ class _CartScreenState extends State<CartScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.local_mall_outlined,
-                size: 100, color: Colors.grey[300]),
+            Icon(Icons.local_mall_outlined, size: 100, color: Colors.grey[300]),
             const SizedBox(height: 24),
             const Text(
               "Your cart is empty",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
@@ -274,8 +272,10 @@ class _CartScreenState extends State<CartScreen> {
               onPressed: widget.onGoShopping,
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorClass.mad,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 15,
+                ),
               ),
               child: const Text("Start Shopping"),
             ),

@@ -38,11 +38,11 @@ class FavoriteScreen extends StatelessWidget {
             .toList();
 
         return Scaffold(
-          backgroundColor: ColorClass.details,
+          backgroundColor: ColorClass.backG,
 
           // ✅ AppBar
           appBar: AppBar(
-            backgroundColor: ColorClass.details,
+            backgroundColor: ColorClass.backG,
             elevation: 0,
             title: const Text(
               "Favorites",
@@ -56,8 +56,7 @@ class FavoriteScreen extends StatelessWidget {
                 : [
                     IconButton(
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      onPressed: () =>
-                          _confirmClearAll(context, user.uid),
+                      onPressed: () => _confirmClearAll(context, user.uid),
                     ),
                   ],
           ),
@@ -99,7 +98,9 @@ class FavoriteScreen extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorClass.mad,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 12),
+                            horizontal: 30,
+                            vertical: 12,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
@@ -134,11 +135,11 @@ class FavoriteScreen extends StatelessWidget {
                         itemCount: favPerfumes.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 15,
-                          mainAxisSpacing: 15,
-                          childAspectRatio: 0.7,
-                        ),
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 15,
+                              mainAxisSpacing: 15,
+                              childAspectRatio: 0.7,
+                            ),
                         itemBuilder: (context, index) {
                           return ItemsCard(
                             perfume: favPerfumes[index],
@@ -160,8 +161,7 @@ class FavoriteScreen extends StatelessWidget {
                                   'price': perfume.price,
                                   'img': perfume.image,
                                   'category': perfume.category,
-                                  'timestamp':
-                                      FieldValue.serverTimestamp(),
+                                  'timestamp': FieldValue.serverTimestamp(),
                                 });
                               }
                             },
@@ -182,21 +182,16 @@ class FavoriteScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text("Clear Favorites"),
-        content: const Text(
-            "Are you sure you want to remove all favorites?"),
+        content: const Text("Are you sure you want to remove all favorites?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text("Cancel"),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
               Navigator.pop(context);
 

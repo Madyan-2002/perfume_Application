@@ -31,8 +31,8 @@ class _AdminScreenState extends State<AdminScreen> {
   String selectedCategory = "Men";
 
   bool isLoading = false;
-  
-   final storageRef = FirebaseStorage.instance.ref();
+
+  final storageRef = FirebaseStorage.instance.ref();
   String? imgName;
 
   String? imgUrl;
@@ -60,7 +60,7 @@ class _AdminScreenState extends State<AdminScreen> {
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: _signOut,
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -138,9 +138,8 @@ class _AdminScreenState extends State<AdminScreen> {
                     borderRadius: .circular(15),
                   ),
                   child: Center(child: Text(imgName?.substring(0, 10) ?? '')),
-              
                 ),
-              ]
+              ],
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField(
@@ -173,7 +172,9 @@ class _AdminScreenState extends State<AdminScreen> {
                     : const Text(
                         "Add Perfume",
                         style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
             ),
@@ -183,8 +184,11 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
-  Widget _inputField(String hint, TextEditingController controller,
-      {int maxLines = 1}) {
+  Widget _inputField(
+    String hint,
+    TextEditingController controller, {
+    int maxLines = 1,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextField(
@@ -194,9 +198,7 @@ class _AdminScreenState extends State<AdminScreen> {
           hintText: hint,
           filled: true,
           fillColor: bg,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
