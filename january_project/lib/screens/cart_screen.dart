@@ -80,11 +80,13 @@ class _CartScreenState extends State<CartScreen> {
                                 child: const Text("Cancel"),
                               ),
                               TextButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text(
-                                  "Delete",
-                                  style: TextStyle(color: Colors.red),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                    Colors.redAccent,
+                                  ),
                                 ),
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text("Delete"),
                               ),
                             ],
                           ),
@@ -277,7 +279,10 @@ class _CartScreenState extends State<CartScreen> {
                   vertical: 15,
                 ),
               ),
-              child: const Text("Start Shopping"),
+              child: Text(
+                "Start Shopping",
+                style: TextStyle(color: ColorClass.lightGrey),
+              ),
             ),
           ],
         ),
