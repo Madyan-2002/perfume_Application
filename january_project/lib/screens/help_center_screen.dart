@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:january_project/styles/color_class.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HelpCenterScreen extends StatelessWidget {
   const HelpCenterScreen({super.key});
@@ -29,7 +30,7 @@ class HelpCenterScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            /// 1. SEARCH HEADER
+            /// HEADER
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(25),
@@ -72,64 +73,59 @@ class HelpCenterScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// 2. QUICK CONTACT BOXES
+                  /// CONTACT
                   const Text(
                     "Direct Den Den Mushi (Contact)",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 15),
+
                   Row(
                     children: [
-                      _contactCard(
-                        Icons.chat_bubble_outline,
-                        "Live Chat",
-                        "2 min wait",
-                      ),
-                      _contactCard(
-                        Icons.email_outlined,
-                        "Email Us",
-                        "24h response",
-                      ),
+                      _contactCard(Icons.chat_bubble_outline, "Live Chat", () {
+                        // لاحقاً تضيف الشات
+                      }),
+                      _contactCard(Icons.email_outlined, "Email Us", () {
+                        _launchEmail();
+                      }),
                     ],
                   ),
 
                   const SizedBox(height: 30),
 
-                  /// 3. FAQ SECTION
+                  /// FAQ
                   const Text(
                     "Top Questions",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
+
                   _buildFaqItem(
                     "How to track my ship (order)?",
-                    "Go to 'My Orders' in your profile to see the real-time location of your treasure.",
+                    "Go to 'My Orders' in your profile.",
                   ),
                   _buildFaqItem(
                     "Are the perfumes authentic?",
-                    "Yes! Every bottle is 100% original, sourced directly from the finest islands in the Grand Line.",
+                    "Yes! 100% original.",
                   ),
                   _buildFaqItem(
                     "How to return a product?",
-                    "If the scent doesn't suit your spirit, you can return it within 14 days of arrival.",
+                    "Return within 14 days.",
                   ),
                   _buildFaqItem(
-                    "Do you ship to the New World?",
-                    "We ship globally! No island is too far for our crew.",
+                    "Do you ship worldwide?",
+                    "Yes, globally.",
                   ),
 
                   const SizedBox(height: 40),
 
-                  /// 4. SOS BUTTON
+                  /// BUTTON
                   SizedBox(
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton.icon(
                       onPressed: () {},
-                      icon: const Icon(
-                        Icons.support_agent,
-                        color: Colors.white,
-                      ),
+                      icon: const Icon(Icons.support_agent, color: Colors.white),
                       label: const Text(
                         "TALK TO THE CAPTAIN",
                         style: TextStyle(color: Colors.white, fontSize: 16),
@@ -151,30 +147,35 @@ class HelpCenterScreen extends StatelessWidget {
     );
   }
 
-  Widget _contactCard(IconData icon, String title, String sub) {
+  /// CONTACT CARD (FIXED)
+  Widget _contactCard(IconData icon, String title, VoidCallback onTap) {
     return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: ColorClass.mad, size: 30),
-            const SizedBox(height: 10),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text(sub, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-          ],
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(15),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5),
+            ],
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: ColorClass.mad, size: 30),
+              const SizedBox(height: 10),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  /// FAQ ITEM
   Widget _buildFaqItem(String question, String answer) {
     return ExpansionTile(
       title: Text(
@@ -183,10 +184,26 @@ class HelpCenterScreen extends StatelessWidget {
       ),
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.all(16),
           child: Text(answer, style: const TextStyle(color: Colors.black54)),
         ),
       ],
     );
+  }
+
+  /// EMAIL FUNCTION (FINAL FIX)
+  Future<void> _launchEmail() async {
+    final Uri emailUri = Uri.parse(
+      'mailto:madyan.m005@gmail.com?subject=Help Request&body=Hello',
+    );
+
+    try {
+      await launchUrl(
+        emailUri,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      debugPrint("Error launching email: $e");
+    }
   }
 }

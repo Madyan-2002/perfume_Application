@@ -12,5 +12,8 @@ class ColorClass {
   static Color price = Color(0xFFD9A071);
   static Color darkGrey = Color(0xFF333333);
   static Color lightGrey = Color(0xFFF8F8F8);
+  static Color primaryAdmin = const Color(0xFF1C1C1C);
+  static Color goldAdmin = const Color(0xFFC6A75E);
+  static Color bgAdmin = const Color(0xFFF8F6F2);
 }
 
