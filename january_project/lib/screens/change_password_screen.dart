@@ -55,12 +55,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       backgroundColor: ColorClass.backG,
       appBar: AppBar(
         backgroundColor: ColorClass.mad,
-        title:  Text('SECURE YOUR TREASURE',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-              color: ColorClass.price,
-            )),
+        title: Text(
+          'SECURE YOUR TREASURE',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            color: ColorClass.price,
+          ),
+        ),
         centerTitle: true,
       ),
       body: Padding(

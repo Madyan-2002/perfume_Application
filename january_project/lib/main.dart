@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:january_project/Model/favorite_provider.dart';
-import 'package:january_project/screens/admin_screen.dart';
+import 'package:january_project/screens/Admin/admin_screen.dart';
 import 'package:january_project/screens/nav_bar.dart';
 import 'package:january_project/screens/splash_screen.dart';
 import 'package:provider/provider.dart';

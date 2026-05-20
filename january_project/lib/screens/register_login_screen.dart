@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:january_project/screens/admin_screen.dart';
+import 'package:january_project/screens/Admin/admin_screen.dart';
 import 'package:january_project/screens/nav_bar.dart';
 import 'package:january_project/styles/color_class.dart';
 import 'package:january_project/widget/custom_text_field.dart';

@@ -33,21 +33,24 @@ class _NavBarState extends State<NavBar> {
     try {
       final User? currentUser = FirebaseAuth.instance.currentUser;
 
-      await FirebaseFirestore.instance.collection('feedbacks').add({
-        'content': message,
-        'sender_email': currentUser?.email ?? 'Unknown User',
-        'sender_uid': currentUser?.uid ?? 'No ID',
-        'sent_at': FieldValue.serverTimestamp(),
-        'status': 'unread',
-      }).timeout(const Duration(seconds: 8));
+      await FirebaseFirestore.instance
+          .collection('feedbacks')
+          .add({
+            'content': message,
+            'sender_email': currentUser?.email ?? 'Unknown User',
+            'sender_uid': currentUser?.uid ?? 'No ID',
+            'sent_at': FieldValue.serverTimestamp(),
+            'status': 'unread',
+          })
+          .timeout(const Duration(seconds: 8));
 
       _feedbackController.clear();
-      
+
       if (mounted) {
-        Navigator.pop(context); 
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Message sent to admin successfully!"), 
+            content: Text("Message sent to admin successfully!"),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
           ),
@@ -57,7 +60,7 @@ class _NavBarState extends State<NavBar> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Failed to send: Check your connection"), 
+            content: Text("Failed to send: Check your connection"),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -76,12 +79,17 @@ class _NavBarState extends State<NavBar> {
       builder: (context) => Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 20, right: 20, top: 25,
+          left: 20,
+          right: 20,
+          top: 25,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("Contact Admin", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              "Contact Admin",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 15),
             TextField(
               controller: _feedbackController,
@@ -90,7 +98,10 @@ class _NavBarState extends State<NavBar> {
                 hintText: "Type your message here...",
                 filled: true,
                 fillColor: Colors.grey[100],
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -98,10 +109,18 @@ class _NavBarState extends State<NavBar> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorClass.mad,
                 minimumSize: const Size(double.infinity, 55),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
               ),
               onPressed: _sendFeedbackToAdmin,
-              child: const Text("Send Now", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: const Text(
+                "Send Now",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 30),
           ],
@@ -130,10 +149,22 @@ class _NavBarState extends State<NavBar> {
         currentIndex: index,
         onTap: changeIndex,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_outline), label: 'Favorite'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Cart'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite_outline),
+            label: 'Favorite',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart_outlined),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
         ],
       ),
     );
@@ -141,17 +172,32 @@ class _NavBarState extends State<NavBar> {
 
   AppBar normalAppBar() {
     return AppBar(
-      leading: index == 3 ? null : IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-        onPressed: () => changeIndex(0),
-      ),
+      leading: index == 3
+          ? null
+          : IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () => changeIndex(0),
+            ),
       backgroundColor: ColorClass.mad,
       elevation: 0,
       centerTitle: true,
-      title: const Text("One Piece", style: TextStyle(fontFamily: 'Averia', fontSize: 22, color: Colors.white)),
+      title: const Text(
+        "One Piece",
+        style: TextStyle(
+          fontFamily: 'Averia',
+          fontSize: 22,
+          color: Colors.white,
+        ),
+      ),
       actions: [
         IconButton(
-          onPressed: () { if (index == 3) _showFeedbackSheet(); },
+          onPressed: () {
+            if (index == 3) _showFeedbackSheet();
+          },
           icon: CircleAvatar(
             radius: 18,
             backgroundColor: Colors.white24,

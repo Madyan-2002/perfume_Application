@@ -82,9 +82,11 @@ class HelpCenterScreen extends StatelessWidget {
 
                   Row(
                     children: [
-                      _contactCard(Icons.chat_bubble_outline, "Live Chat", () {
-                        // لاحقاً تضيف الشات
-                      }),
+                      _contactCard(
+                        Icons.chat_bubble_outline,
+                        "Live Chat",
+                        () => _launchWhatsApp(), // ✅ واتساب هنا
+                      ),
                       _contactCard(Icons.email_outlined, "Email Us", () {
                         _launchEmail();
                       }),
@@ -112,10 +114,7 @@ class HelpCenterScreen extends StatelessWidget {
                     "How to return a product?",
                     "Return within 14 days.",
                   ),
-                  _buildFaqItem(
-                    "Do you ship worldwide?",
-                    "Yes, globally.",
-                  ),
+                  _buildFaqItem("Do you ship worldwide?", "Yes, globally."),
 
                   const SizedBox(height: 40),
 
@@ -124,8 +123,12 @@ class HelpCenterScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.support_agent, color: Colors.white),
+                      onPressed: () => _launchWhatsApp(), 
+                      
+                      icon: const Icon(
+                        Icons.support_agent,
+                        color: Colors.white,
+                      ),
                       label: const Text(
                         "TALK TO THE CAPTAIN",
                         style: TextStyle(color: Colors.white, fontSize: 16),
@@ -147,7 +150,6 @@ class HelpCenterScreen extends StatelessWidget {
     );
   }
 
-  /// CONTACT CARD (FIXED)
   Widget _contactCard(IconData icon, String title, VoidCallback onTap) {
     return Expanded(
       child: InkWell(
@@ -175,7 +177,6 @@ class HelpCenterScreen extends StatelessWidget {
     );
   }
 
-  /// FAQ ITEM
   Widget _buildFaqItem(String question, String answer) {
     return ExpansionTile(
       title: Text(
@@ -191,17 +192,29 @@ class HelpCenterScreen extends StatelessWidget {
     );
   }
 
-  /// EMAIL FUNCTION (FINAL FIX)
+  /// ✅ WHATSAPP FUNCTION
+  Future<void> _launchWhatsApp() async {
+    const phone = '962790781628'; 
+    const message = 'Hello! I need help with my order 🏴‍☠️';
+    final Uri whatsappUri = Uri.parse(
+      'https://wa.me/$phone?text=${Uri.encodeComponent(message)}',
+    );
+
+    try {
+      await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint("Error launching WhatsApp: $e");
+    }
+  }
+
+  /// EMAIL FUNCTION
   Future<void> _launchEmail() async {
     final Uri emailUri = Uri.parse(
       'mailto:madyan.m005@gmail.com?subject=Help Request&body=Hello',
     );
 
     try {
-      await launchUrl(
-        emailUri,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(emailUri, mode: LaunchMode.externalApplication);
     } catch (e) {
       debugPrint("Error launching email: $e");
     }
