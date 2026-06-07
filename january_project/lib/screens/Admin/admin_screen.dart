@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:january_project/screens/Admin/widgets/build_products_tab.dart';
 import 'package:january_project/screens/Admin/widgets/feed_backs_tab.dart';
+import 'package:january_project/screens/Admin/widgets/users_login_tab.dart';
 import 'package:january_project/screens/register_login_screen.dart';
 import 'package:january_project/styles/color_class.dart';
 
@@ -20,7 +21,7 @@ class _AdminScreenState extends State<AdminScreen>
   void initState() {
     super.initState();
 
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   Future<void> _signOut() async {
@@ -59,12 +60,13 @@ class _AdminScreenState extends State<AdminScreen>
           tabs: const [
             Tab(icon: Icon(Icons.add_business), text: "Products"),
             Tab(icon: Icon(Icons.message_outlined), text: "Feedbacks"),
+            Tab(icon: Icon(Icons.people_outline), text: "Users"),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [BuildProductsTab(), FeedBacksTab()],
+        children: const [BuildProductsTab(), FeedBacksTab(), UsersTab()],
       ),
     );
   }
